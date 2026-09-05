@@ -1,0 +1,93 @@
+[
+  {
+    "id": "card:ward-committee",
+    "title": "The ward committee wants a meeting",
+    "body": "Not about anything specific. That is the point — they have heard about the project from someone who is not you.",
+    "choices": [
+      { "id": "attend", "text": "Attend, and bring the drawings", "meters": { "cash": -0.4 }, "relationships": { "community": 8, "municipality": 4 } },
+      { "id": "send", "text": "Send the consultant", "meters": {}, "relationships": { "community": -5 } },
+      { "id": "skip", "text": "Skip it, the EIA deadline is closer", "meters": { "trust": -4 }, "relationships": { "community": -10 } }
+    ]
+  },
+  {
+    "id": "card:rain",
+    "title": "A wet quarter",
+    "body": "The access track is impassable for six weeks. Everything on site stops; the paperwork does not.",
+    "choices": [
+      { "id": "wait", "text": "Wait it out", "meters": {}, "relationships": {} },
+      { "id": "gravel", "text": "Gravel the track now", "meters": { "cash": -2.2, "trust": 3 }, "relationships": { "community": 5 } }
+    ]
+  },
+  {
+    "id": "card:claim",
+    "title": "A land claim is lodged",
+    "body": "Over a portion of site 4. It may take years. It may be withdrawn next quarter. Nobody will tell you which.",
+    "choices": [
+      { "id": "engage", "text": "Meet the claimants", "meters": { "cash": -0.8 }, "relationships": { "inkosi": 6, "community": 4 } },
+      { "id": "litigate", "text": "Refer it to the attorneys", "meters": { "cash": -3.0, "trust": -6 }, "relationships": { "community": -8, "inkosi": -10 } }
+    ]
+  },
+  {
+    "id": "card:dfi-conditions",
+    "title": "The DFI adds a condition precedent",
+    "body": "A social and labour plan, signed by parties who have not yet agreed to be parties.",
+    "choices": [
+      { "id": "comply", "text": "Do the work", "meters": { "cash": -1.5, "paper": 10 }, "relationships": { "dfi": 10 } },
+      { "id": "push", "text": "Push back on scope", "meters": {}, "relationships": { "dfi": -8 } }
+    ]
+  },
+  {
+    "id": "card:fuel-terms",
+    "title": "The wholesaler offers to fund the forecourt",
+    "body": "Capital up front, a supply agreement for fifteen years, and a margin that is theirs.",
+    "choices": [
+      { "id": "accept", "text": "Accept the terms", "meters": { "cash": 8.0, "trust": -3 }, "relationships": { "oilCo": 14, "community": -4 } },
+      { "id": "decline", "text": "Fund it yourself", "meters": {}, "relationships": { "oilCo": -6 } }
+    ]
+  },
+  {
+    "id": "card:borehole-rumour",
+    "title": "A rumour about the water",
+    "body": "Someone at the municipality says the aquifer is thinner than the district plan claims. They will not put it in writing.",
+    "choices": [
+      { "id": "survey", "text": "Bring the survey forward", "meters": { "cash": -0.6, "paper": 5 }, "relationships": { "municipality": 3 } },
+      { "id": "ignore", "text": "Carry on", "meters": {}, "relationships": {} }
+    ]
+  },
+  {
+    "id": "card:contractor",
+    "title": "The contractor is not local",
+    "body": "Cheaper by nine percent, and forty men from the ward were not called.",
+    "choices": [
+      { "id": "local", "text": "Re-tender locally", "meters": { "cash": -1.8, "trust": 6 }, "relationships": { "community": 12 } },
+      { "id": "proceed", "text": "Proceed as awarded", "meters": { "trust": -7 }, "relationships": { "community": -12 } }
+    ]
+  },
+  {
+    "id": "card:audit",
+    "title": "The municipality is placed under administration",
+    "body": "Every signature you were waiting on now belongs to someone who has not read the file.",
+    "choices": [
+      { "id": "rebuild", "text": "Start the relationship again", "meters": { "cash": -1.0 }, "relationships": { "municipality": 8 } },
+      { "id": "wait", "text": "Wait for the dust to settle", "meters": { "paper": -8 }, "relationships": { "municipality": -4 } }
+    ]
+  },
+  {
+    "id": "card:school",
+    "title": "The school asks for the sports field back",
+    "body": "They have been asking since before you arrived. This time they have written to the district.",
+    "choices": [
+      { "id": "commit", "text": "Commit publicly to a replacement", "meters": { "trust": 5, "cash": -0.5 }, "relationships": { "community": 10 } },
+      { "id": "defer", "text": "Say it is under consideration", "meters": { "trust": -3 }, "relationships": { "community": -6 } }
+    ]
+  },
+  {
+    "id": "card:diesel",
+    "title": "Diesel price shock",
+    "body": "Everything trucked in costs more this quarter, and everything is trucked in.",
+    "choices": [
+      { "id": "absorb", "text": "Absorb it", "meters": { "cash": -2.5 }, "relationships": {} },
+      { "id": "slow", "text": "Slow the programme", "meters": { "cash": -0.8, "trust": -3 }, "relationships": { "community": -4 } }
+    ]
+  }
+]

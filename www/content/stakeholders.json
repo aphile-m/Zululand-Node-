@@ -1,0 +1,27 @@
+[
+  {
+    "id": "inkosi",
+    "name": "The Inkosi and the traditional council",
+    "note": "Holds the trust land. Cannot be bought, and notices when you only visit before you need something."
+  },
+  {
+    "id": "municipality",
+    "name": "District municipality",
+    "note": "Signs the permissions. Slow, and slower when the ward committee is unhappy."
+  },
+  {
+    "id": "community",
+    "name": "Community forum",
+    "note": "Not a monolith. Moderates the rate at which trust decays."
+  },
+  {
+    "id": "oilCo",
+    "name": "Fuel wholesaler",
+    "note": "Will fund the forecourt on terms that are good for the forecourt."
+  },
+  {
+    "id": "dfi",
+    "name": "Development finance institution",
+    "note": "Cheap money, long conditions precedent, and a reporting burden."
+  }
+]

@@ -1,0 +1,93 @@
+[
+  {
+    "id": "forecourt",
+    "name": "Fuel forecourt",
+    "tag": "services",
+    "buildCost": 12.0,
+    "buildTurns": 3,
+    "quarterlyRevenue": 2.4,
+    "quarterlyOpex": 1.1,
+    "jobs": 14,
+    "households": 0,
+    "trustOnComplete": 4,
+    "requiresUnlock": "build:forecourt"
+  },
+  {
+    "id": "agriHub",
+    "name": "Agri-processing hub",
+    "tag": "agri",
+    "buildCost": 18.0,
+    "buildTurns": 4,
+    "quarterlyRevenue": 3.2,
+    "quarterlyOpex": 1.8,
+    "jobs": 40,
+    "households": 0,
+    "trustOnComplete": 6,
+    "requiresUnlock": "build:agriHub"
+  },
+  {
+    "id": "solarPlant",
+    "name": "Solar plant",
+    "tag": "energy",
+    "buildCost": 26.0,
+    "buildTurns": 5,
+    "quarterlyRevenue": 4.5,
+    "quarterlyOpex": 1.4,
+    "jobs": 12,
+    "households": 0,
+    "trustOnComplete": 3,
+    "requiresUnlock": "build:solarPlant"
+  },
+  {
+    "id": "wasteWorks",
+    "name": "Materials recovery works",
+    "tag": "waste",
+    "buildCost": 15.0,
+    "buildTurns": 4,
+    "quarterlyRevenue": 2.2,
+    "quarterlyOpex": 1.3,
+    "jobs": 26,
+    "households": 0,
+    "trustOnComplete": 3,
+    "requiresUnlock": "build:wasteWorks"
+  },
+  {
+    "id": "reticulation",
+    "name": "Water reticulation",
+    "tag": "services",
+    "buildCost": 22.0,
+    "buildTurns": 5,
+    "quarterlyRevenue": 0.8,
+    "quarterlyOpex": 0.9,
+    "jobs": 8,
+    "households": 0,
+    "trustOnComplete": 10,
+    "requiresUnlock": "build:reticulation"
+  },
+  {
+    "id": "clinic",
+    "name": "Primary health clinic",
+    "tag": "services",
+    "buildCost": 9.0,
+    "buildTurns": 3,
+    "quarterlyRevenue": 0.2,
+    "quarterlyOpex": 0.8,
+    "jobs": 18,
+    "households": 0,
+    "trustOnComplete": 8,
+    "requiresUnlock": ""
+  },
+  {
+    "id": "housingPhase",
+    "name": "Housing phase (erven with title)",
+    "tag": "housing",
+    "buildCost": 20.0,
+    "buildTurns": 4,
+    "quarterlyRevenue": 1.5,
+    "quarterlyOpex": 0.4,
+    "jobs": 30,
+    "households": 80,
+    "trustOnComplete": 9,
+    "requiresUnlock": "build:housingPhase"
+  }
+]

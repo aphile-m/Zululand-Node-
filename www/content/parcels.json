@@ -1,0 +1,110 @@
+[
+  {
+    "id": "site1",
+    "status": "identified",
+    "ownerType": "municipal",
+    "hectares": 4.0,
+    "currentUse": "commonage grazing",
+    "displacementCost": 5,
+    "studiesComplete": []
+  },
+  {
+    "id": "site2",
+    "status": "unknown",
+    "ownerType": "trust",
+    "hectares": 3.2,
+    "currentUse": "sports field",
+    "displacementCost": 40,
+    "studiesComplete": []
+  },
+  {
+    "id": "site3",
+    "status": "unknown",
+    "ownerType": "private",
+    "hectares": 6.5,
+    "currentUse": "dryland maize",
+    "displacementCost": 10,
+    "studiesComplete": []
+  },
+  {
+    "id": "site4",
+    "status": "unknown",
+    "ownerType": "trust",
+    "hectares": 12.0,
+    "currentUse": "communal grazing",
+    "displacementCost": 15,
+    "studiesComplete": []
+  },
+  {
+    "id": "site5",
+    "status": "identified",
+    "ownerType": "municipal",
+    "hectares": 2.1,
+    "currentUse": "informal taxi rank",
+    "displacementCost": 25,
+    "studiesComplete": []
+  },
+  {
+    "id": "site6",
+    "status": "identified",
+    "ownerType": "private",
+    "hectares": 8.0,
+    "currentUse": "fallow",
+    "displacementCost": 0,
+    "studiesComplete": []
+  },
+  {
+    "id": "site7",
+    "status": "frozen",
+    "ownerType": "trust",
+    "hectares": 5.5,
+    "currentUse": "family graves",
+    "displacementCost": 60,
+    "studiesComplete": []
+  },
+  {
+    "id": "site8",
+    "status": "identified",
+    "ownerType": "municipal",
+    "hectares": 1.8,
+    "currentUse": "landfill margin",
+    "displacementCost": 0,
+    "studiesComplete": []
+  },
+  {
+    "id": "site9",
+    "status": "unknown",
+    "ownerType": "private",
+    "hectares": 15.0,
+    "currentUse": "sugarcane under contract",
+    "displacementCost": 12,
+    "studiesComplete": []
+  },
+  {
+    "id": "site10",
+    "status": "unknown",
+    "ownerType": "trust",
+    "hectares": 9.0,
+    "currentUse": "wetland margin",
+    "displacementCost": 20,
+    "studiesComplete": []
+  },
+  {
+    "id": "site11",
+    "status": "identified",
+    "ownerType": "municipal",
+    "hectares": 3.0,
+    "currentUse": "road reserve",
+    "displacementCost": 5,
+    "studiesComplete": []
+  },
+  {
+    "id": "site12",
+    "status": "unknown",
+    "ownerType": "unknown",
+    "hectares": 7.2,
+    "currentUse": "contested, two claimants",
+    "displacementCost": 30,
+    "studiesComplete": []
+  }
+]

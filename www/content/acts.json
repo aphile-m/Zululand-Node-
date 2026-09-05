@@ -1,0 +1,97 @@
+[
+  {
+    "id": 0,
+    "name": "Fog of ownership",
+    "subtitle": "Nobody can tell you who owns it",
+    "gate": {
+      "all": [
+        { "parcelStatusAtLeast": { "parcel": "site2", "status": "optioned" } },
+        { "relationshipAtLeast": { "who": "inkosi", "value": 60 } }
+      ]
+    },
+    "unlocks": ["study:trafficCount"],
+    "burnMultiplier": 1.0
+  },
+  {
+    "id": 1,
+    "name": "The paper years",
+    "subtitle": "All cost, no buildings",
+    "gate": {
+      "all": [
+        { "flag": "environmentalAuthorisation" },
+        { "flag": "roadAccessPermission" },
+        { "parcelStatusAtLeast": { "parcel": "site2", "status": "leased" } }
+      ]
+    },
+    "unlocks": ["build:forecourt"],
+    "burnMultiplier": 1.4
+  },
+  {
+    "id": 2,
+    "name": "Ignition",
+    "subtitle": "Something finally opens",
+    "gate": {
+      "all": [
+        { "buildingOperational": { "typeId": "forecourt" } },
+        { "counterAtLeast": { "counter": "cashPositiveStreak", "value": 4 } }
+      ]
+    },
+    "unlocks": ["build:agriHub", "build:solarPlant", "build:wasteWorks"],
+    "burnMultiplier": 1.5
+  },
+  {
+    "id": 3,
+    "name": "Three engines",
+    "subtitle": "Two of three, and the water on paper",
+    "gate": {
+      "all": [
+        {
+          "atLeastN": {
+            "n": 2,
+            "of": [
+              { "buildingOperational": { "tag": "agri" } },
+              { "buildingOperational": { "tag": "energy" } },
+              { "buildingOperational": { "tag": "waste" } }
+            ]
+          }
+        },
+        { "flag": "bulkWaterContracted" }
+      ]
+    },
+    "unlocks": ["build:reticulation"],
+    "burnMultiplier": 1.6
+  },
+  {
+    "id": 4,
+    "name": "The water wall",
+    "subtitle": "The number you did or did not look at",
+    "gate": {
+      "all": [
+        { "meterAtLeast": { "meter": "water", "value": 60 } },
+        { "buildingOperational": { "typeId": "reticulation" } }
+      ]
+    },
+    "unlocks": ["build:housingPhase"],
+    "burnMultiplier": 1.5
+  },
+  {
+    "id": 5,
+    "name": "Erven and title",
+    "subtitle": "Land becomes address",
+    "gate": {
+      "all": [
+        { "derivedAtLeast": { "metric": "householdsWithTitle", "value": 200 } }
+      ]
+    },
+    "unlocks": [],
+    "burnMultiplier": 1.3
+  },
+  {
+    "id": 6,
+    "name": "Handover",
+    "subtitle": "What you leave behind",
+    "gate": null,
+    "unlocks": [],
+    "burnMultiplier": 1.0
+  }
+]

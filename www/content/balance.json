@@ -1,0 +1,51 @@
+{
+  "_note": "Placeholder numbers (SPEC §13 phase 1). Expect phase 3 to rewrite this file wholesale; nothing outside it should hardcode a number.",
+
+  "schemaVersion": 1,
+  "actionPointsPerTurn": 3,
+  "handoverTurns": 8,
+
+  "start": {
+    "cash": 40.0,
+    "trust": 55,
+    "paper": 0,
+    "relationships": { "inkosi": 40, "municipality": 45, "community": 50, "oilCo": 35, "dfi": 30 }
+  },
+
+  "waterMin": 20,
+  "waterMax": 90,
+  "waterWallThreshold": 60,
+
+  "quarterlyBurn": 1.8,
+  "trustDecayPerTurn": 1.6,
+  "trustDecayGraceTurns": 3,
+  "trustDecayCommunityRelief": 0.6,
+
+  "driftPerTurn": 1.2,
+  "driftTarget": 50,
+
+  "engage": {
+    "1": { "cash": 0.3, "relationship": 4, "trust": 0.5 },
+    "2": { "cash": 0.9, "relationship": 9, "trust": 1.2 },
+    "3": { "cash": 2.2, "relationship": 16, "trust": 2.5 }
+  },
+
+  "rights": {
+    "option":   { "cashPerHectare": 0.35, "paperCost": 8,  "turns": 2, "trustCost": 0 },
+    "lease":    { "cashPerHectare": 1.10, "paperCost": 22, "turns": 4, "trustCost": 2 },
+    "purchase": { "cashPerHectare": 3.40, "paperCost": 35, "turns": 6, "trustCost": 4 }
+  },
+
+  "mitigation": {
+    "cash": 6.5,
+    "turns": 3,
+    "trustOnComplete": 15
+  },
+
+  "extractionCashThreshold": 120.0,
+  "extractionTrustFloor": 35,
+
+  "score": { "householdWeight": 3, "jobWeight": 1, "trustWeight": 2 },
+
+  "logLimit": 200
+}

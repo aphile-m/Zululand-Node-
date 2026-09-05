@@ -1,0 +1,24 @@
+{
+  "name": "node-game",
+  "version": "0.1.0",
+  "description": "NODE — a turn-based rural development strategy game (see SPEC.md)",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "serve": "node serve.js",
+    "test": "node scripts/test-engine.js",
+    "typecheck": "tsc --noEmit",
+    "check": "npm run typecheck && npm test",
+    "sync": "cap sync android",
+    "build:apk": "cd android && gradlew assembleDebug"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.4.0",
+    "@capacitor/app": "^8.1.0",
+    "@capacitor/cli": "^8.4.0",
+    "@capacitor/core": "^8.4.0"
+  }
+}

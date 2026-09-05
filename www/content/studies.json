@@ -1,0 +1,81 @@
+[
+  {
+    "id": "bulkServices",
+    "name": "Bulk services survey",
+    "cost": 2.5,
+    "turns": 4,
+    "paperGain": 10,
+    "waterDelta": 0,
+    "revealsWater": true,
+    "setsFlag": "",
+    "requiresUnlock": ""
+  },
+  {
+    "id": "environmental",
+    "name": "Environmental impact assessment",
+    "cost": 3.5,
+    "turns": 6,
+    "paperGain": 25,
+    "waterDelta": 0,
+    "revealsWater": false,
+    "setsFlag": "environmentalAuthorisation",
+    "requiresUnlock": ""
+  },
+  {
+    "id": "trafficCount",
+    "name": "Traffic count and access design",
+    "cost": 1.2,
+    "turns": 3,
+    "paperGain": 15,
+    "waterDelta": 0,
+    "revealsWater": false,
+    "setsFlag": "roadAccessPermission",
+    "requiresUnlock": "study:trafficCount"
+  },
+  {
+    "id": "heritage",
+    "name": "Heritage and graves survey",
+    "cost": 1.8,
+    "turns": 4,
+    "paperGain": 12,
+    "waterDelta": 0,
+    "revealsWater": false,
+    "setsFlag": "heritageCleared",
+    "requiresUnlock": ""
+  },
+  {
+    "id": "geotech",
+    "name": "Geotechnical investigation",
+    "cost": 2.0,
+    "turns": 3,
+    "paperGain": 8,
+    "waterDelta": 0,
+    "revealsWater": false,
+    "setsFlag": "geotechDone",
+    "requiresUnlock": ""
+  },
+  {
+    "id": "boreholeField",
+    "name": "Borehole field",
+    "_note": "DECISIONS D7 — the cheap, weak way to raise bulk supply.",
+    "cost": 8.0,
+    "turns": 4,
+    "paperGain": 5,
+    "waterDelta": 15,
+    "revealsWater": false,
+    "setsFlag": "boreholesDrilled",
+    "requiresUnlock": ""
+  },
+  {
+    "id": "bulkWaterContract",
+    "name": "Bulk water contract",
+    "_note": "DECISIONS D7 — the expensive, strong way. Also satisfies act 3's gate.",
+    "cost": 14.0,
+    "turns": 6,
+    "paperGain": 20,
+    "waterDelta": 25,
+    "revealsWater": false,
+    "setsFlag": "bulkWaterContracted",
+    "requiresUnlock": ""
+  }
+]

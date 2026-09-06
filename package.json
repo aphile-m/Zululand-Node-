@@ -1,16 +1,17 @@
 {
   "name": "node-game",
   "version": "0.1.0",
-  "description": "NODE — a turn-based rural development strategy game (see SPEC.md)",
+  "description": "NODE \u2014 a turn-based rural development strategy game (see SPEC.md)",
   "private": true,
   "type": "module",
   "scripts": {
     "serve": "node serve.js",
     "test": "node scripts/test-engine.js",
     "typecheck": "tsc --noEmit",
-    "check": "npm run typecheck && npm test",
+    "check": "npm run typecheck && npm test && npm run test:fullrun",
     "sync": "cap sync android",
-    "build:apk": "cd android && gradlew assembleDebug"
+    "build:apk": "cd android && gradlew assembleDebug",
+    "test:fullrun": "node scripts/test-fullrun.js"
   },
   "devDependencies": {
     "typescript": "^5.9.2"

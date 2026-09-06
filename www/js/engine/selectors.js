@@ -134,8 +134,10 @@ export function remainingWaterOptions(state) {
     (s) =>
       s.waterDelta > 0 &&
       s.setsFlag !== '' &&
+      // The flag is the record: a water study pays its waterDelta once in a
+      // run, however many parcels it is later repeated on for paper.
       state.flags[s.setsFlag] !== true &&
-      !state.timers.some((t) => t.kind === 'study' && t.refId === s.id),
+      !state.timers.some((t) => t.kind === 'study' && t.refId.startsWith(`${s.id}@`)),
   );
 }
 
@@ -148,7 +150,9 @@ export function remainingWaterOptions(state) {
 export function waterIsUnreachable(state) {
   if (state.meters.water >= BALANCE.waterWallThreshold) return false;
   const pending = state.timers.some(
-    (t) => t.kind === 'study' && (studyDef(t.refId)?.waterDelta ?? 0) > 0,
+    (t) =>
+      t.kind === 'study' &&
+      (studyDef(t.refId.split('@')[0] ?? '')?.waterDelta ?? 0) > 0,
   );
   if (pending) return false;
   const options = remainingWaterOptions(state);

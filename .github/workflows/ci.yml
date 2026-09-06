@@ -35,3 +35,5 @@ jobs:
         run: npx tsc --noEmit
       - name: Reducer suite
         run: node scripts/test-engine.js
+      - name: Full run is completable (SPEC §13 phase 2)
+        run: node scripts/test-fullrun.js

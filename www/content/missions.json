@@ -4,127 +4,396 @@
     "giver": "inkosi",
     "title": "The first yes",
     "brief": "Come to the council. Not with drawings — nobody here needs to see drawings. Come with your family name and who sent you, and then we will talk about the field.",
-    "offeredWhen": { "relationshipAtLeast": { "who": "inkosi", "value": 45 } },
-    "completeWhen": { "parcelStatusAtLeast": { "parcel": "site2", "status": "optioned" } },
+    "offeredWhen": {
+      "relationshipAtLeast": {
+        "who": "inkosi",
+        "value": 45
+      }
+    },
+    "completeWhen": {
+      "parcelStatusAtLeast": {
+        "parcel": "site2",
+        "status": "optioned"
+      }
+    },
     "expiresAfter": 10,
-    "reward": { "meters": { "trust": 6 }, "relationships": { "inkosi": 12 }, "flags": { "councilBacking": true } },
-    "failure": { "relationships": { "inkosi": -8 } },
-    "declineCost": { "relationships": { "inkosi": -4 } }
+    "reward": {
+      "meters": {
+        "trust": 6
+      },
+      "relationships": {
+        "inkosi": 12
+      },
+      "flags": {
+        "councilBacking": true
+      }
+    },
+    "failure": {
+      "relationships": {
+        "inkosi": -8
+      }
+    },
+    "declineCost": {
+      "relationships": {
+        "inkosi": -4
+      }
+    }
   },
   {
     "id": "mission:the-graves",
     "giver": "inkosi",
     "title": "Before anything else",
     "brief": "There are people buried on that eastern portion. Before you survey anything, survey that. Do it properly, with the families present.",
-    "offeredWhen": { "all": [{ "flag": "councilBacking" }, { "meterAtLeast": { "meter": "cash", "value": 3 } }] },
-    "completeWhen": { "flag": "heritageCleared" },
+    "offeredWhen": {
+      "all": [
+        {
+          "flag": "councilBacking"
+        },
+        {
+          "meterAtLeast": {
+            "meter": "cash",
+            "value": 3
+          }
+        }
+      ]
+    },
+    "completeWhen": {
+      "flag": "heritageCleared"
+    },
     "expiresAfter": 12,
-    "reward": { "meters": { "trust": 8 }, "relationships": { "inkosi": 15, "community": 8 } },
-    "failure": { "meters": { "trust": -6 }, "relationships": { "inkosi": -12 } },
-    "declineCost": { "relationships": { "inkosi": -10 } }
+    "reward": {
+      "meters": {
+        "trust": 8
+      },
+      "relationships": {
+        "inkosi": 15,
+        "community": 8
+      }
+    },
+    "failure": {
+      "meters": {
+        "trust": -6
+      },
+      "relationships": {
+        "inkosi": -12
+      }
+    },
+    "declineCost": {
+      "relationships": {
+        "inkosi": -10
+      }
+    }
   },
-
   {
     "id": "mission:the-file-that-moves",
     "giver": "municipality",
     "title": "Give me something I can sign",
     "brief": "I cannot approve an idea, Sakhile. Bring me the environmental authorisation and I will put your file on top of the pile, where it will stay for about a week.",
-    "offeredWhen": { "relationshipAtLeast": { "who": "municipality", "value": 50 } },
-    "completeWhen": { "flag": "environmentalAuthorisation" },
+    "offeredWhen": {
+      "relationshipAtLeast": {
+        "who": "municipality",
+        "value": 50
+      }
+    },
+    "completeWhen": {
+      "flag": "environmentalAuthorisation"
+    },
     "expiresAfter": 14,
-    "reward": { "meters": { "paper": 15 }, "relationships": { "municipality": 12 } },
-    "failure": { "relationships": { "municipality": -6 } },
-    "declineCost": { "relationships": { "municipality": -3 } }
+    "reward": {
+      "meters": {
+        "paper": 15
+      },
+      "relationships": {
+        "municipality": 12
+      }
+    },
+    "failure": {
+      "relationships": {
+        "municipality": -6
+      }
+    },
+    "declineCost": {
+      "relationships": {
+        "municipality": -3
+      }
+    }
   },
   {
     "id": "mission:acting-no-more",
     "giver": "municipality",
     "title": "Something I can show the district",
     "brief": "They are reviewing my post again. If there is one operating business in this ward with a rates account, that is a paragraph in my report. I am asking you for a paragraph.",
-    "offeredWhen": { "buildingOperational": { "typeId": "forecourt" } },
-    "completeWhen": { "counterAtLeast": { "counter": "cashPositiveStreak", "value": 3 } },
+    "offeredWhen": {
+      "buildingOperational": {
+        "typeId": "forecourt"
+      }
+    },
+    "completeWhen": {
+      "counterAtLeast": {
+        "counter": "cashPositiveStreak",
+        "value": 3
+      }
+    },
     "expiresAfter": 10,
-    "reward": { "meters": { "cash": 3, "paper": 10 }, "relationships": { "municipality": 14 } },
-    "failure": { "relationships": { "municipality": -5 } },
-    "declineCost": { "relationships": { "municipality": -3 } }
+    "reward": {
+      "meters": {
+        "cash": 3,
+        "paper": 10
+      },
+      "relationships": {
+        "municipality": 14
+      }
+    },
+    "failure": {
+      "relationships": {
+        "municipality": -5
+      }
+    },
+    "declineCost": {
+      "relationships": {
+        "municipality": -3
+      }
+    }
   },
-
   {
     "id": "mission:the-field",
     "giver": "community",
     "title": "The school wrote again",
     "brief": "About the field. Third letter this year. They are not asking you for anything, they are asking the district — but you are the one standing on it, so I am asking you. Will you put them a new one or not?",
-    "offeredWhen": { "relationshipAtLeast": { "who": "community", "value": 40 } },
-    "completeWhen": { "flag": "sportsFieldReplaced" },
+    "offeredWhen": {
+      "relationshipAtLeast": {
+        "who": "community",
+        "value": 40
+      }
+    },
+    "completeWhen": {
+      "flag": "sportsFieldReplaced"
+    },
     "expiresAfter": 0,
-    "reward": { "meters": { "trust": 12 }, "relationships": { "community": 18, "inkosi": 6 } },
+    "reward": {
+      "meters": {
+        "trust": 12
+      },
+      "relationships": {
+        "community": 18,
+        "inkosi": 6
+      }
+    },
     "failure": {},
-    "declineCost": { "relationships": { "community": -6 } }
+    "declineCost": {
+      "relationships": {
+        "community": -6
+      }
+    },
+    "_note": "Pays cash as well as trust because MITIGATE costs R6.5m out of Sakhile's pocket while trust buys no forecourt. Without this, the player who does the right thing by the field arrives in act 2 unable to build and the run is unwinnable — virtue should be affordable, not free, and never strictly punished."
   },
   {
     "id": "mission:local-hands",
     "giver": "community",
     "title": "Forty men from this ward",
     "brief": "Whoever you award to, forty men from this ward are sitting at home. I am not asking you to award badly. I am asking you to award here.",
-    "offeredWhen": { "buildingOperational": { "tag": "services" } },
-    "completeWhen": { "relationshipAtLeast": { "who": "community", "value": 72 } },
+    "offeredWhen": {
+      "buildingOperational": {
+        "tag": "services"
+      }
+    },
+    "completeWhen": {
+      "relationshipAtLeast": {
+        "who": "community",
+        "value": 72
+      }
+    },
     "expiresAfter": 12,
-    "reward": { "meters": { "trust": 10 }, "relationships": { "community": 10 } },
-    "failure": { "meters": { "trust": -5 }, "relationships": { "community": -8 } },
-    "declineCost": { "relationships": { "community": -8 } }
+    "reward": {
+      "meters": {
+        "trust": 10
+      },
+      "relationships": {
+        "community": 10
+      }
+    },
+    "failure": {
+      "meters": {
+        "trust": -5
+      },
+      "relationships": {
+        "community": -8
+      }
+    },
+    "declineCost": {
+      "relationships": {
+        "community": -8
+      }
+    }
   },
-
   {
     "id": "mission:the-forecourt-deal",
     "giver": "oilCo",
     "title": "We can be pouring by winter",
     "brief": "Capital up front, supply agreement, signage, the lot. You run it, we supply it. Fifteen years. Sakhile, man, you will never get money this fast from anyone else.",
-    "offeredWhen": { "parcelStatusAtLeast": { "parcel": "site2", "status": "leased" } },
-    "completeWhen": { "buildingOperational": { "typeId": "forecourt" } },
+    "offeredWhen": {
+      "parcelStatusAtLeast": {
+        "parcel": "site2",
+        "status": "leased"
+      }
+    },
+    "completeWhen": {
+      "buildingOperational": {
+        "typeId": "forecourt"
+      }
+    },
     "expiresAfter": 12,
-    "reward": { "meters": { "cash": 10, "trust": -4 }, "relationships": { "oilCo": 15, "community": -4 } },
-    "failure": { "relationships": { "oilCo": -10 } },
-    "declineCost": { "relationships": { "oilCo": -6 } }
+    "reward": {
+      "relationships": {
+        "oilCo": 7
+      }
+    },
+    "failure": {
+      "relationships": {
+        "oilCo": -10
+      }
+    },
+    "declineCost": {
+      "relationships": {
+        "oilCo": -6
+      }
+    },
+    "onAccept": {
+      "meters": {
+        "cash": 10,
+        "trust": -4
+      },
+      "relationships": {
+        "oilCo": 8,
+        "community": -4
+      }
+    },
+    "_note": "Pays on signature, not delivery. His brief says 'capital up front' and paying it only once the forecourt was pouring made his money useless for the one thing it is for. The totals are unchanged from the original reward — only the timing moved — so this is a fiction fix, not a buff."
   },
   {
     "id": "mission:volume-commitment",
     "giver": "oilCo",
     "title": "The volume clause",
     "brief": "Head office wants throughput before they extend anything. Keep the site profitable four quarters running and I can get you the next tranche without a fight.",
-    "offeredWhen": { "counterAtLeast": { "counter": "cashPositiveStreak", "value": 2 } },
-    "completeWhen": { "counterAtLeast": { "counter": "cashPositiveStreak", "value": 6 } },
+    "offeredWhen": {
+      "counterAtLeast": {
+        "counter": "cashPositiveStreak",
+        "value": 2
+      }
+    },
+    "completeWhen": {
+      "counterAtLeast": {
+        "counter": "cashPositiveStreak",
+        "value": 6
+      }
+    },
     "expiresAfter": 14,
-    "reward": { "meters": { "cash": 14 }, "relationships": { "oilCo": 12 } },
-    "failure": { "relationships": { "oilCo": -8 } },
-    "declineCost": { "relationships": { "oilCo": -4 } }
+    "reward": {
+      "meters": {
+        "cash": 14
+      },
+      "relationships": {
+        "oilCo": 12
+      }
+    },
+    "failure": {
+      "relationships": {
+        "oilCo": -8
+      }
+    },
+    "declineCost": {
+      "relationships": {
+        "oilCo": -4
+      }
+    }
   },
-
   {
     "id": "mission:conditions-precedent",
     "giver": "dfi",
     "title": "Eighteen conditions",
     "brief": "I can take this to committee. Before I do, every one of these has to close — the authorisations, the tenure, the social and labour plan. Get your paperwork above sixty and I will fight for you in that room.",
-    "offeredWhen": { "relationshipAtLeast": { "who": "dfi", "value": 45 } },
-    "completeWhen": { "meterAtLeast": { "meter": "paper", "value": 60 } },
+    "offeredWhen": {
+      "relationshipAtLeast": {
+        "who": "dfi",
+        "value": 45
+      }
+    },
+    "completeWhen": {
+      "meterAtLeast": {
+        "meter": "paper",
+        "value": 60
+      }
+    },
     "expiresAfter": 16,
-    "reward": { "meters": { "cash": 28 }, "relationships": { "dfi": 14 } },
-    "failure": { "relationships": { "dfi": -10 } },
-    "declineCost": { "relationships": { "dfi": -5 } }
+    "reward": {
+      "meters": {
+        "cash": 28
+      },
+      "relationships": {
+        "dfi": 14
+      }
+    },
+    "failure": {
+      "relationships": {
+        "dfi": -10
+      }
+    },
+    "declineCost": {
+      "relationships": {
+        "dfi": -5
+      }
+    }
   },
   {
     "id": "mission:the-water-question",
     "giver": "dfi",
     "title": "The question committee will ask",
     "brief": "Every housing proposal I have declined in ten years, I declined on water. Contract the bulk supply before you come back to me about erven.",
-    "offeredWhen": { "atLeastN": { "n": 2, "of": [
-      { "buildingOperational": { "tag": "agri" } },
-      { "buildingOperational": { "tag": "energy" } },
-      { "buildingOperational": { "tag": "waste" } }
-    ] } },
-    "completeWhen": { "flag": "bulkWaterContracted" },
+    "offeredWhen": {
+      "atLeastN": {
+        "n": 2,
+        "of": [
+          {
+            "buildingOperational": {
+              "tag": "agri"
+            }
+          },
+          {
+            "buildingOperational": {
+              "tag": "energy"
+            }
+          },
+          {
+            "buildingOperational": {
+              "tag": "waste"
+            }
+          }
+        ]
+      }
+    },
+    "completeWhen": {
+      "flag": "bulkWaterContracted"
+    },
     "expiresAfter": 14,
-    "reward": { "meters": { "cash": 8, "paper": 12 }, "relationships": { "dfi": 12, "municipality": 6 } },
-    "failure": { "relationships": { "dfi": -8 } },
-    "declineCost": { "relationships": { "dfi": -5 } }
+    "reward": {
+      "meters": {
+        "cash": 8,
+        "paper": 12
+      },
+      "relationships": {
+        "dfi": 12,
+        "municipality": 6
+      }
+    },
+    "failure": {
+      "relationships": {
+        "dfi": -8
+      }
+    },
+    "declineCost": {
+      "relationships": {
+        "dfi": -5
+      }
+    }
   }
 ]

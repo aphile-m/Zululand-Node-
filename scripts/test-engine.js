@@ -656,12 +656,20 @@ group('DECISIONS D12/D14 — Sakhile is local, and it is mechanical');
     for (const id of [...sakhile.missions.offered]) {
       sakhile = reduce(sakhile, { type: 'ACCEPT_MISSION', missionId: id });
     }
+    /* Studies are per-parcel now, so a timer's refId is `<studyId>@<parcelId>`
+       and "is this one already running?" has to match the prefix. Matching the
+       bare id silently stopped finding pending studies, and this loop then
+       re-proposed the same blocked study every turn instead of moving on. */
     const study = STUDIES
       .filter((st) => st.waterDelta === 0 && !sakhile.flags[st.setsFlag]
-        && !sakhile.timers.some((t) => t.refId === st.id))
+        && !sakhile.timers.some((t) => t.refId.startsWith(`${st.id}@`)))
       .sort((a, b) => a.cost - b.cost)[0];
     if (study && sakhile.meters.cash > study.cost + 8) {
-      sakhile = reduce(sakhile, { type: 'COMMISSION_STUDY', studyId: study.id, parcelId: 'site1' });
+      const site = Object.keys(sakhile.parcels)
+        .find((pid) => !sakhile.parcels[pid].studiesComplete.includes(study.id));
+      if (site) {
+        sakhile = reduce(sakhile, { type: 'COMMISSION_STUDY', studyId: study.id, parcelId: site });
+      }
     }
     if (sakhile.meters.cash > 8) {
       sakhile = reduce(sakhile, {
@@ -695,6 +703,67 @@ group('DECISIONS D12/D14 — Sakhile is local, and it is mechanical');
   }
   check('a run that never builds anything eventually sinks',
     idle.status === 'lost', `${idle.status}/${idle.endingKind} on turn ${idle.turn}`);
+}
+
+/* ------------------------------------------- per-parcel studies + onAccept */
+group('studies are per-parcel, and their flags land once');
+{
+  const rich = { ...startRun(4242), meters: { ...startRun(4242).meters, cash: 400 } };
+  const one = reduce(rich, { type: 'COMMISSION_STUDY', studyId: 'geotech', parcelId: 'site1' });
+  check('a study can be commissioned', one.timers.length === 1);
+  check('the timer names study AND parcel', one.timers[0].refId === 'geotech@site1',
+    one.timers[0].refId);
+  check('the same study cannot be re-commissioned on the same parcel while pending',
+    reduce(one, { type: 'COMMISSION_STUDY', studyId: 'geotech', parcelId: 'site1' }).timers.length === 1);
+  check('...but can run on a different parcel',
+    reduce(one, { type: 'COMMISSION_STUDY', studyId: 'geotech', parcelId: 'site3' }).timers.length === 2);
+
+  const done = endTurns(one, 4);
+  check('completion records the study on that parcel (SPEC §5 studiesComplete)',
+    done.parcels.site1.studiesComplete.includes('geotech'),
+    JSON.stringify(done.parcels.site1.studiesComplete));
+  check('...and not on any other parcel',
+    done.parcels.site3.studiesComplete.length === 0);
+  check('a completed study cannot be repeated on the same parcel',
+    reduce({ ...done, apRemaining: 3 },
+      { type: 'COMMISSION_STUDY', studyId: 'geotech', parcelId: 'site1' }).timers.length === 0);
+
+  /* The water guard: paper is earned every time, waterDelta once. Without this
+     twelve parcels would mean twelve bulk water contracts and §9's wall would
+     be free. */
+  let w = { ...rich, meters: { ...rich.meters, water: 20, cash: 400 } };
+  w = endTurns(reduce(w, { type: 'COMMISSION_STUDY', studyId: 'boreholeField', parcelId: 'site1' }), 5);
+  const afterFirst = w.meters.water;
+  check('a water study raises water the first time', afterFirst > 20, `20 -> ${afterFirst}`);
+  const paperBefore = w.meters.paper;
+  w = endTurns(reduce({ ...w, apRemaining: 3, meters: { ...w.meters, cash: 400 } },
+    { type: 'COMMISSION_STUDY', studyId: 'boreholeField', parcelId: 'site3' }), 5);
+  check('...and NOT the second time on another parcel', w.meters.water === afterFirst,
+    `${afterFirst} -> ${w.meters.water}`);
+  check('...but still pays its paper', w.meters.paper >= paperBefore,
+    `${paperBefore} -> ${w.meters.paper}`);
+}
+
+group('DECISIONS D13 — a mission that pays on signature');
+{
+  const deal = MISSIONS.find((m) => m.id === 'mission:the-forecourt-deal');
+  check('Renier\'s deal declares an onAccept payout', !!deal.onAccept);
+  check('...matching his brief, which promises capital up front',
+    /up front/i.test(deal.brief));
+
+  let s = { ...startRun(4242),
+    parcels: { ...startRun(4242).parcels, site2: { ...startRun(4242).parcels.site2, status: 'leased' } } };
+  s = settle(endTurns(s, 1));
+  check('the deal is offered once site2 is leased',
+    s.missions.offered.includes('mission:the-forecourt-deal'), s.missions.offered.join(', '));
+  const before = s.meters.cash;
+  const taken = reduce(s, { type: 'ACCEPT_MISSION', missionId: 'mission:the-forecourt-deal' });
+  check('accepting pays the capital immediately', taken.meters.cash > before,
+    `R${before}m -> R${taken.meters.cash}m`);
+  check('...and charges the trust immediately too', taken.meters.trust < s.meters.trust,
+    `${s.meters.trust} -> ${taken.meters.trust}`);
+  check('a mission with no onAccept pays nothing on acceptance',
+    MISSIONS.filter((m) => !m.onAccept).length > 0);
 }
 
 /* --------------------------------------------------------- content integrity */

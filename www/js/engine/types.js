@@ -262,6 +262,7 @@
  * @property {Predicate} offeredWhen
  * @property {Predicate} completeWhen
  * @property {number} expiresAfter  turns from acceptance; 0 means never
+ * @property {MissionReward} [onAccept]  paid the moment the job is taken, not on delivery
  * @property {MissionReward} reward
  * @property {MissionReward} failure
  * @property {MissionReward} [declineCost]

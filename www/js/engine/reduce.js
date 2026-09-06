@@ -71,6 +71,24 @@ function scheduleTimer(s, kind, refId, durationTurns) {
   };
 }
 
+/* A study timer names both the study and the parcel it was commissioned on,
+   because a study is per-parcel: you survey each site separately, and paper is
+   earned per survey. `studiesComplete` on the parcel is the record of which
+   ones are done there — declared in SPEC §5 and, until this was fixed, never
+   written, which left studies infinitely repeatable on one parcel and made
+   `waterDelta` farmable enough to trivialise the §9 water wall. */
+
+/** @param {string} studyId @param {string} parcelId */
+const studyRef = (studyId, parcelId) => `${studyId}@${parcelId}`;
+
+/** @param {string} refId @returns {{ studyId:string, parcelId:string }} */
+function parseStudyRef(refId) {
+  const at = refId.lastIndexOf('@');
+  return at < 0
+    ? { studyId: refId, parcelId: '' }
+    : { studyId: refId.slice(0, at), parcelId: refId.slice(at + 1) };
+}
+
 /**
  * @param {import('./types.js').GameState} s
  * @param {Partial<import('./types.js').Meters>} delta
@@ -187,14 +205,17 @@ function commissionStudy(s, a) {
   if (!def || !parcel) return s;
   if (def.requiresUnlock !== '' && !unlockedIn(s, def.requiresUnlock)) return s;
   if (s.meters.cash < def.cost) return s;
+  // A study is per-parcel: you survey each site, and each survey is its own job.
   if (parcel.studiesComplete.includes(def.id)) return s;
-  if (s.timers.some((t) => t.kind === 'study' && t.refId === def.id)) return s;
+  if (s.timers.some((t) => t.kind === 'study' && t.refId === studyRef(def.id, a.parcelId))) {
+    return s;
+  }
 
   return {
     ...s,
     apRemaining: spendAp(s),
     meters: applyMeters(s, { cash: -def.cost }),
-    timers: [...s.timers, scheduleTimer(s, 'study', def.id, def.turns)],
+    timers: [...s.timers, scheduleTimer(s, 'study', studyRef(def.id, a.parcelId), def.turns)],
     log: logged(s, `Commissioned ${def.name} on ${a.parcelId}.`, 'info'),
   };
 }
@@ -352,12 +373,15 @@ function advanceAct(s) {
  */
 function acceptMission(s, a) {
   if (s.status !== 'playing' || s.pendingEvent !== null) return s;
-  const next = missions.accept(s, a.missionId);
-  if (!next) return s;
+  const out = missions.accept(s, a.missionId);
+  if (!out) return s;
   const def = missionDef(a.missionId);
   return {
     ...s,
-    missions: next,
+    missions: out.missions,
+    meters: applyMeters(s, out.onAccept.meters ?? {}),
+    relationships: applyRelationships(s.relationships, out.onAccept.relationships ?? {}),
+    flags: { ...s.flags, ...(out.onAccept.flags ?? {}) },
     log: logged(s, `Took on “${def?.title ?? a.missionId}”.`, 'info'),
   };
 }
@@ -424,17 +448,34 @@ function endTurn(state) {
     }
 
     if (t.kind === 'study') {
-      const def = studyDef(t.refId);
+      const { studyId, parcelId } = parseStudyRef(t.refId);
+      const def = studyDef(studyId);
       if (def) {
+        /* Paper is earned every time — that is what makes surveying another
+           site a real option rather than a grind. Everything else lands only
+           on the FIRST completion anywhere: you contract bulk water once, the
+           authorisation is granted once, and the aquifer only surprises you
+           once. Without this split, twelve parcels would mean twelve bulk
+           water contracts and the §9 wall would be free. */
+        const firstTime = def.setsFlag === '' ? !waterSurveyed : flags[def.setsFlag] !== true;
         meters = {
           ...meters,
           paper: clamp(meters.paper + def.paperGain, 0, 100),
-          water: clamp(meters.water + def.waterDelta, 0, 100),
+          water: clamp(meters.water + (firstTime ? def.waterDelta : 0), 0, 100),
         };
-        if (def.revealsWater) waterSurveyed = true;
+        if (def.revealsWater && firstTime) waterSurveyed = true;
         if (def.setsFlag !== '') flags = { ...flags, [def.setsFlag]: true };
-        say(`${def.name} complete.`, 'good');
-        if (def.revealsWater) say(`Bulk water capacity reads ${meters.water}.`, 'info');
+        if (parcelId && parcels[parcelId]) {
+          const p = parcels[parcelId];
+          parcels = {
+            ...parcels,
+            [parcelId]: { ...p, studiesComplete: [...p.studiesComplete, def.id] },
+          };
+        }
+        say(`${def.name} complete${parcelId ? ` on ${parcelId}` : ''}.`, 'good');
+        if (def.revealsWater && firstTime) {
+          say(`Bulk water capacity reads ${meters.water}.`, 'info');
+        }
       }
     } else if (t.kind === 'construction') {
       const b = buildings.find((x) => x.id === t.refId);

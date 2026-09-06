@@ -5,12 +5,13 @@
     "tag": "services",
     "buildCost": 12.0,
     "buildTurns": 3,
-    "quarterlyRevenue": 2.4,
+    "quarterlyRevenue": 3.6,
     "quarterlyOpex": 1.1,
     "jobs": 14,
     "households": 0,
     "trustOnComplete": 4,
-    "requiresUnlock": "build:forecourt"
+    "requiresUnlock": "build:forecourt",
+    "_note": "Act 2 is called Ignition and its gate demands four consecutive cash-positive quarters. At the old R2.4m revenue the forecourt netted 1.3 against act 2's 1.5 burn, so the streak could never start and the act was unclearable on the one building it unlocks. 3.6 nets 2.5 — a through-route forecourt that actually pays."
   },
   {
     "id": "agriHub",

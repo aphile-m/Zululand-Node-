@@ -290,6 +290,53 @@ act, not a bug to balance away.
 
 ---
 
+## D16 — Studies are per-parcel; their flags and water land once
+
+SPEC §5 declares `Parcel.studiesComplete: string[]`. Phase 1 read it and never wrote it,
+so the guard was dead: a study could be repeated on the same parcel without limit, and
+because `waterDelta` applied on every completion, twelve parcels meant twelve bulk water
+contracts and §9's water wall was free.
+
+Resolved. A study timer's `refId` is now `<studyId>@<parcelId>`, and completion records the
+study on that parcel. The split that makes it work:
+
+- **`paperGain` pays every time.** Surveying another site is a real option — cash and a
+  turn slot for paperwork — rather than a grind on one parcel.
+- **`setsFlag`, `revealsWater` and `waterDelta` land only on the FIRST completion
+  anywhere.** You contract bulk water once, the authorisation is granted once, and the
+  aquifer only surprises you once.
+
+---
+
+## D17 — A mission may pay on signature
+
+`MissionDef.onAccept` is applied by `ACCEPT_MISSION`, alongside the existing `reward` paid
+on completion.
+
+Added because `mission:the-forecourt-deal` was incoherent: Renier's brief promises
+"Capital up front, supply agreement, signage, the lot", and the reward paid only once the
+forecourt was already operational — making his money useless for the one thing it exists
+to fund, and leaving act 2 unreachable for a player who had just paid R6.5m to replace the
+sports field.
+
+His totals are unchanged; only the timing moved. That makes taking his deal an immediate,
+tangible cash injection with an immediate trust and community cost, which is a far better
+decision than a deferred bonus — and it is what the fiction said all along.
+
+---
+
+## D18 — Act 2's gate was arithmetically unreachable
+
+`forecourt.quarterlyRevenue` was 2.4 against opex 1.1, netting 1.3. Act 2's burn is
+`quarterlyBurn 1.0 x burnMultiplier 1.5` = 1.5. The act's gate demands **four consecutive
+cash-positive turns**, and the one building the act unlocks could not produce a single one.
+
+Raised to 3.6, netting 2.5. This is the only balance number changed to make the game
+completable; three others were tried and reverted once the real cause — a bug in the
+*test strategy*, not the content — was found. See the phase-2 commit.
+
+---
+
 ## D15 — Answers to SPEC.md §15 (open decisions)
 
 1. **Action points per turn — 3.** Kept as the spec's placeholder, but read from

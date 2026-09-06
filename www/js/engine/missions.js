@@ -151,15 +151,24 @@ export function tick(s) {
  *
  * @param {import('./types.js').GameState} s
  * @param {string} id
- * @returns {import('./types.js').MissionState|null} null when illegal
+ * @returns {{ missions: import('./types.js').MissionState,
+ *              onAccept: import('./types.js').MissionReward }|null} null when illegal
  */
 export function accept(s, id) {
   if (!s.missions.offered.includes(id)) return null;
-  if (!missionDef(id)) return null;
+  const def = missionDef(id);
+  if (!def) return null;
   return {
-    ...s.missions,
-    offered: s.missions.offered.filter((x) => x !== id),
-    accepted: [...s.missions.accepted, { id, acceptedOnTurn: s.turn }],
+    missions: {
+      ...s.missions,
+      offered: s.missions.offered.filter((x) => x !== id),
+      accepted: [...s.missions.accepted, { id, acceptedOnTurn: s.turn }],
+    },
+    /* Some deals pay on signature, not on delivery. Renier's forecourt offer
+       says so in as many words — "capital up front" — and paying it only once
+       the forecourt is pouring made his money useless for building the
+       forecourt, which is the one thing it is for. */
+    onAccept: def.onAccept ?? {},
   };
 }
 

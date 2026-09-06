@@ -192,7 +192,105 @@ failure, no toolchain.
 
 ---
 
-## D11 — Answers to SPEC.md §15 (open decisions)
+## D12 — The player is Sakhile, and he is local
+
+SPEC.md never says who the player is. It describes "the player" moving meters, which is
+enough to build a reducer and not enough to write a line of dialogue.
+
+**Sakhile.** A young local businessman — spaza, then bakkie hire, then a small logistics
+outfit that does well enough that people have started asking him for things. Resourceful,
+impatient, and genuinely convinced this place works if enough people pull the same way.
+
+The load-bearing detail is that **he is from here**, and it is mechanical in four places:
+
+1. **Opening relationships** (D14). High with the people who knew his grandfather,
+   low with the institutions that lend money. An outside developer would have exactly
+   the inverse problem and a much larger cheque.
+2. **Opening cash.** He is not a fund. The first act is about getting funded, and the two
+   routes — Renier fast and expensive, Amara slow and cheap — are the first real choice
+   in the game.
+3. **The sports field (SPEC §8) cuts deeper.** Sakhile played on that field. Taking it is
+   not an outsider's oversight, it is a local man's decision about people he knows. The
+   mechanic is unchanged; what it *means* is not.
+4. **The extraction ending (SPEC §10) cuts deeper.** Ending rich with a failed town is
+   hollow for anyone. For the man who still lives there, it is a betrayal — and he is
+   the only developer in the story who will still be there in eighteen years.
+
+The five stakeholders stop being institutions and become the people who run them:
+Inkosi Mthiyane, Thandeka Nxumalo, Bra Sipho Zulu, Renier van Zyl, Dr Amara Okonkwo.
+`stakeholders.json` gains `role` (the institution) and `portrait` (sprite key) alongside
+the person's name.
+
+---
+
+## D13 — Missions
+
+SPEC.md has no mission system. Added, because `ENGAGE` on its own is a slider you drag to
+make a number go up, and the game is supposed to be about people.
+
+A mission is **a predicate that offers it, a predicate that completes it, a deadline and a
+payout** — so `gates.js`, written for act gates, does all the evaluation and `missions.js`
+only moves ids between four buckets. Content lives in `missions.json`.
+
+What it costs against the spec:
+
+- **`GameState.missions`** — `{ offered, accepted: [{id, acceptedOnTurn}], completed, failed }`.
+  A mission id is in exactly one bucket, asserted by test.
+- **Two new actions** — `ACCEPT_MISSION`, `DECLINE_MISSION`. The only widening of §5's
+  `Action` union in this repo. Both cost **zero action points**: taking a job is not the
+  work, and charging to hear the ask would tax the player for talking to people.
+- **One new step in §6's turn loop**, as **5b**, between relationship drift and the event
+  draw. Steps 1-9 keep their order and meaning — nothing is reordered. It sits there
+  rather than at the end so that a mission payout lands *before* step 7's gate check (a
+  flag a mission sets can open a gate the same turn) and *before* step 8's loss check (a
+  reward can pull Sakhile back from a blockade, and a mission he blew can be what pushes
+  him into one).
+- **No RNG.** Missions are a pure function of state, so they cannot desynchronise a
+  replay. Offer order is content order.
+
+Inside one tick: completions settle **before** expiries, so a mission finished on its
+deadline turn pays out rather than blowing up. New offers come last, so nothing can be
+offered and expire in the same turn. Declining sends a mission to `failed`, not back to
+the table — saying no to Bra Sipho is an answer, and he does not ask twice.
+
+**The §8 hazard, and why it is a test.** `mission:the-field` has Bra Sipho ask whether
+Sakhile will replace the sports field. That is one careless sentence away from breaking
+the game's signature mechanic: SPEC §8 requires that the UI **must not warn the player the
+first time**. A brief that said "build the replacement first or you'll lose trust" would
+defuse the entire teaching moment. So the brief asks and never explains — no mention of
+trust, cost, penalty or grievance — and a test greps the brief for exactly those words and
+fails if they appear. The mission makes the choice *legible as a choice*; it never tells
+you which way is which.
+
+---
+
+## D14 — Opening balance encodes D12
+
+`balance.json` start values are no longer generic. Relationships open at
+inkosi 58 / community 65 (he is known here) against oilCo 25 / dfi 20 (he is not known
+there). Cash opens low and `quarterlyBurn` drops to 1.0 — Sakhile runs lean because he is
+local: no Sandton office, no consultants on retainer.
+
+Low capital plus low overhead makes the paper years survivable *only if he gets funded
+before they end*, which is the intended shape of act 0-1.
+
+Two tests guard it, both written against the shape rather than the numbers so they survive
+phase 3's rewrite:
+
+- Runway (`cash / quarterlyBurn`) must sit in [15, 40] turns. Shorter and act 0-1 is
+  unwinnable; longer and getting funded stops being the early game.
+- A scripted competent opening must survive the paper years, be squeezed below a third of
+  its starting cash on the way, and be funded off the back of a mission it completed.
+  The seed-4242 trace: R28m down to R4.5m by turn 9, then Dr Okonkwo's committee lands
+  R28m on turn 10.
+
+The inverse is also asserted, because SPEC §10 names it: a run that does the paperwork and
+never builds anything **must** still reach `sunk`. That failure mode is the point of the
+act, not a bug to balance away.
+
+---
+
+## D15 — Answers to SPEC.md §15 (open decisions)
 
 1. **Action points per turn — 3.** Kept as the spec's placeholder, but read from
    `balance.json` and never hardcoded, since §13's phase 3 expects to retune it.

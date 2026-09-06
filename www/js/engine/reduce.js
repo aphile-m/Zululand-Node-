@@ -12,10 +12,11 @@
    log has to replay cleanly even if it was recorded by an older build. The UI
    asks the selectors what is legal and greys out the rest. */
 
-import { ACTS, PARCELS, BALANCE, buildingDef, studyDef } from '../../content/index.js';
+import { ACTS, PARCELS, BALANCE, buildingDef, studyDef, missionDef } from '../../content/index.js';
 import { drawInt } from './rng.js';
 import { drawCard, freshDeck, resolveChoice } from './events.js';
 import { evaluate } from './gates.js';
+import * as missions from './missions.js';
 import {
   gatePassed,
   netOperatingIncome,
@@ -140,6 +141,7 @@ export function startRun(seed) {
     counters: { cashPositiveStreak: 0 },
     engagedThisTurn: [],
     lastProgressTurn: 0,
+    missions: missions.emptyMissions(),
     hand: [],
     deck: d.deck,
     discard: [],
@@ -341,6 +343,42 @@ function advanceAct(s) {
   };
 }
 
+/**
+ * DECISIONS D13. Accepting and declining are free in action points — the work a
+ * mission asks for costs points on its own, and charging to hear the ask would
+ * tax the player for talking to people.
+ * @param {import('./types.js').GameState} s
+ * @param {import('./types.js').AcceptMissionAction} a
+ */
+function acceptMission(s, a) {
+  if (s.status !== 'playing' || s.pendingEvent !== null) return s;
+  const next = missions.accept(s, a.missionId);
+  if (!next) return s;
+  const def = missionDef(a.missionId);
+  return {
+    ...s,
+    missions: next,
+    log: logged(s, `Took on “${def?.title ?? a.missionId}”.`, 'info'),
+  };
+}
+
+/**
+ * @param {import('./types.js').GameState} s
+ * @param {import('./types.js').DeclineMissionAction} a
+ */
+function declineMission(s, a) {
+  if (s.status !== 'playing' || s.pendingEvent !== null) return s;
+  const out = missions.decline(s, a.missionId);
+  if (!out) return s;
+  return {
+    ...s,
+    missions: out.missions,
+    meters: applyMeters(s, out.cost.meters ?? {}),
+    relationships: applyRelationships(s.relationships, out.cost.relationships ?? {}),
+    log: logged(s, `Turned down “${out.title}”.`, 'bad'),
+  };
+}
+
 /** @param {import('./types.js').GameState} s @param {string} key */
 function unlockedIn(s, key) {
   for (const a of ACTS) {
@@ -458,6 +496,23 @@ function endTurn(state) {
     s = { ...s, relationships: r };
   }
 
+  /* --- 5b. Missions (DECISIONS D13). Inserted here rather than appended: a
+     mission payout must land BEFORE step 7's gate check, so a flag a mission
+     sets can open a gate on the same turn, and BEFORE step 8's loss check, so a
+     reward can pull Sakhile back from a blockade — and so a mission he blew can
+     be what pushes him into one. Steps 1-9 keep their order and meaning. --- */
+  {
+    const m = missions.tick(s);
+    s = {
+      ...s,
+      missions: m.missions,
+      meters: applyMeters(s, m.meters),
+      relationships: applyRelationships(s.relationships, m.relationships),
+      flags: { ...s.flags, ...m.flags },
+    };
+    for (const e of m.entries) say(e.text, e.kind);
+  }
+
   /* --- 6. Event draw. --- */
   if (s.pendingEvent === null && (s.deck.length > 0 || s.discard.length > 0)) {
     const d = drawCard(s.deck, s.discard, s.seed, s.rngCursor);
@@ -513,7 +568,7 @@ function endTurn(state) {
     };
   }
 
-  /* Handover terminates the run after a fixed number of turns (DECISIONS D11.2). */
+  /* Handover terminates the run after a fixed number of turns (DECISIONS D15.2). */
   if (s.act === 6) {
     const entered = s.counters.handoverEnteredTurn ?? s.turn;
     if (s.turn + 1 - entered >= BALANCE.handoverTurns) {
@@ -576,6 +631,10 @@ export function reduce(state, action) {
       return resolveEvent(state, action);
     case 'ADVANCE_ACT':
       return advanceAct(state);
+    case 'ACCEPT_MISSION':
+      return acceptMission(state, action);
+    case 'DECLINE_MISSION':
+      return declineMission(state, action);
     case 'END_TURN':
       return endTurn(state);
     default: {

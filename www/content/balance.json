@@ -5,18 +5,20 @@
   "actionPointsPerTurn": 3,
   "handoverTurns": 8,
 
+  "_startNote": "DECISIONS D14. These encode Sakhile being local rather than an outside developer. He opens high with the people who knew his grandfather and low with the institutions that lend money — an outside developer would have exactly the opposite problem, and a much bigger cheque. The low opening cash is the point: the first act is about getting funded, and the two ways to get funded (Renier fast and expensive, Amara slow and cheap) are the first real choice in the game.",
   "start": {
-    "cash": 40.0,
-    "trust": 55,
+    "cash": 28.0,
+    "trust": 60,
     "paper": 0,
-    "relationships": { "inkosi": 40, "municipality": 45, "community": 50, "oilCo": 35, "dfi": 30 }
+    "relationships": { "inkosi": 58, "municipality": 45, "community": 65, "oilCo": 25, "dfi": 20 }
   },
 
   "waterMin": 20,
   "waterMax": 90,
   "waterWallThreshold": 60,
 
-  "quarterlyBurn": 1.8,
+  "_burnNote": "Sakhile runs lean because he is local — no Sandton office, no consultants on retainer. That is both realistic and the mechanical expression of D12: his overhead is low, but so is his capital, so the paper years are survivable only if he gets funded before they end.",
+  "quarterlyBurn": 1.0,
   "trustDecayPerTurn": 1.6,
   "trustDecayGraceTurns": 3,
   "trustDecayCommunityRelief": 0.6,

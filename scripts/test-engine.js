@@ -26,7 +26,8 @@ import {
   householdsWithTitle,
   waterIsUnreachable,
 } from '../www/js/engine/selectors.js';
-import { BALANCE, STUDIES } from '../www/content/index.js';
+import { turnsLeft } from '../www/js/engine/missions.js';
+import { BALANCE, STUDIES, MISSIONS, STAKEHOLDERS, PLAYER } from '../www/content/index.js';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 
@@ -50,6 +51,10 @@ const endTurns = (s, n) => {
   }
   return cur;
 };
+/* Clear any card awaiting a choice. A pending event blocks every other action
+   (the reducer's `busy` guard), so scenarios that want to act must settle first. */
+const settle = (s) =>
+  s.pendingEvent ? reduce(s, { type: 'RESOLVE_EVENT', choiceId: firstChoice(s) }) : s;
 const firstChoice = (s) => {
   const card = JSON.parse(
     readFileSync(join(HERE, '../www/content/cards.json'), 'utf8'),
@@ -509,6 +514,187 @@ group('legality — illegal actions are no-ops, never throws');
     reduce({ ...s, meters: { ...s.meters, cash: 500, paper: 100 } },
       { type: 'ACQUIRE_RIGHTS', parcelId: 'site7', mode: 'option' })
       .parcels.site7.status === 'frozen');
+}
+
+/* ------------------------------------------------------- D13 missions */
+group('DECISIONS D13 — missions');
+{
+  const s = startRun(4242);
+  check('a run starts with no missions anywhere',
+    s.missions.offered.length === 0 && s.missions.accepted.length === 0 &&
+    s.missions.completed.length === 0 && s.missions.failed.length === 0);
+
+  // Inkosi Mthiyane opens at 58, above the mission's threshold of 45, so the
+  // first job should be on the table after one turn.
+  const t1 = settle(endTurns(s, 1));
+  check('Inkosi Mthiyane offers the first job on turn 1',
+    t1.missions.offered.includes('mission:the-first-yes'),
+    t1.missions.offered.join(', '));
+
+  const taken = reduce(t1, { type: 'ACCEPT_MISSION', missionId: 'mission:the-first-yes' });
+  check('accepting moves it from offered to accepted',
+    !taken.missions.offered.includes('mission:the-first-yes') &&
+    taken.missions.accepted.some((a) => a.id === 'mission:the-first-yes'));
+  check('accepting costs no action points (D13)', taken.apRemaining === t1.apRemaining);
+  check('turnsLeft reports the deadline', turnsLeft(taken, 'mission:the-first-yes') === 10,
+    String(turnsLeft(taken, 'mission:the-first-yes')));
+
+  // Completing it: option site2, then end a turn.
+  const optioned = {
+    ...taken,
+    meters: { ...taken.meters, cash: 300, paper: 100 },
+  };
+  const done = endTurns(
+    reduce(optioned, { type: 'ACQUIRE_RIGHTS', parcelId: 'site2', mode: 'option' }), 1,
+  );
+  check('completing the objective completes the mission',
+    done.missions.completed.includes('mission:the-first-yes'));
+  check('...and pays the reward flag', done.flags.councilBacking === true);
+  check('...and the reward relationship landed',
+    done.relationships.inkosi > taken.relationships.inkosi,
+    `${taken.relationships.inkosi} -> ${done.relationships.inkosi}`);
+
+  // Expiry.
+  const stale = endTurns(taken, 12);
+  check('an unmet mission expires after its deadline',
+    stale.missions.failed.includes('mission:the-first-yes'),
+    `failed: ${stale.missions.failed.join(', ')}`);
+  check('...and is not also marked complete',
+    !stale.missions.completed.includes('mission:the-first-yes'));
+
+  // A mission finished on its very last turn must pay out, not blow up.
+  const lastGasp = {
+    ...taken,
+    turn: taken.turn + 9,
+    meters: { ...taken.meters, cash: 300, paper: 100 },
+  };
+  const clutch = endTurns(
+    reduce(lastGasp, { type: 'ACQUIRE_RIGHTS', parcelId: 'site2', mode: 'option' }), 1,
+  );
+  check('completion beats expiry on the deadline turn',
+    clutch.missions.completed.includes('mission:the-first-yes') &&
+    !clutch.missions.failed.includes('mission:the-first-yes'));
+
+  // Declining.
+  const declined = reduce(t1, { type: 'DECLINE_MISSION', missionId: 'mission:the-first-yes' });
+  check('declining costs the relationship',
+    declined.relationships.inkosi < t1.relationships.inkosi,
+    `${t1.relationships.inkosi} -> ${declined.relationships.inkosi}`);
+  check('a declined mission is not re-offered later',
+    !endTurns(declined, 4).missions.offered.includes('mission:the-first-yes'));
+  check('cannot accept a mission that was never offered',
+    JSON.stringify(reduce(s, { type: 'ACCEPT_MISSION', missionId: 'mission:the-graves' }))
+      === JSON.stringify(s));
+  check('cannot accept an unknown mission id',
+    JSON.stringify(reduce(t1, { type: 'ACCEPT_MISSION', missionId: 'nope' }))
+      === JSON.stringify(t1));
+
+  // A mission id must live in exactly one bucket, always.
+  const busy = endTurns(taken, 14);
+  const all = [
+    ...busy.missions.offered, ...busy.missions.accepted.map((a) => a.id),
+    ...busy.missions.completed, ...busy.missions.failed,
+  ];
+  check('no mission id appears in two buckets', new Set(all).size === all.length,
+    all.join(', '));
+
+  // Missions must not touch the RNG — that is what keeps replay trivial.
+  const before = endTurns(startRun(99), 1);
+  const withMission = reduce(before, { type: 'ACCEPT_MISSION', missionId: 'mission:the-first-yes' });
+  check('accepting a mission does not advance the RNG cursor',
+    withMission.rngCursor === before.rngCursor);
+
+  // §8 must survive the mission system: Bra Sipho asks about the field, but
+  // must never warn that building on it costs trust (DECISIONS D13).
+  const fieldBrief = JSON.parse(readFileSync(join(HERE, '../www/content/missions.json'), 'utf8'))
+    .find((m) => m.id === 'mission:the-field');
+  const leak = /trust|penalt|cost you|grievance|do not build|don.t build/i.test(fieldBrief.brief);
+  check('the sports-field mission asks, and never warns (§8)', leak === false, fieldBrief.brief);
+}
+
+/* ------------------------------------------------------- D12/D14 Sakhile */
+group('DECISIONS D12/D14 — Sakhile is local, and it is mechanical');
+{
+  const s = startRun(4242);
+  check('the player is Sakhile', PLAYER.name === 'Sakhile');
+  check('every stakeholder is a named person, not an institution',
+    STAKEHOLDERS.every((x) => x.name !== '' && x.role !== '' && !/^The /.test(x.name)),
+    STAKEHOLDERS.map((x) => x.name).join(', '));
+  check('every mission giver is a real stakeholder',
+    MISSIONS.every((m) => STAKEHOLDERS.some((x) => x.id === m.giver)));
+
+  // Local: known by the people, unknown to the lenders.
+  check('he opens high with the people who know him',
+    s.relationships.inkosi > 50 && s.relationships.community > 50,
+    `inkosi ${s.relationships.inkosi}, community ${s.relationships.community}`);
+  check('...and low with the institutions that lend money',
+    s.relationships.dfi < 40 && s.relationships.oilCo < 40,
+    `dfi ${s.relationships.dfi}, oilCo ${s.relationships.oilCo}`);
+  /* Runway, not a rand figure — this invariant survives a phase-3 rebalance.
+     Too short and act 0-1 is unwinnable; too long and getting funded stops
+     being the early game, which is the whole point of a young local operator. */
+  const runway = s.meters.cash / BALANCE.quarterlyBurn;
+  check('his runway is long enough that the paper years are survivable',
+    runway >= 15, `${runway.toFixed(1)} turns`);
+  check('...and short enough that getting funded IS the early game',
+    runway <= 40, `${runway.toFixed(1)} turns`);
+
+  /* Viability. This is the regression test phase 3 will lean on hardest: a
+     rebalance that makes the paper years unsurvivable should fail here, not in
+     a playtest. The scripted player is competent but not clairvoyant — it takes
+     every job offered, builds paperwork with the cheapest study it can afford,
+     and courts Dr Okonkwo until she takes it to committee.
+
+     The invariant is the SHAPE of act 0-1, not a cash figure: Sakhile is
+     squeezed hard, and then the funding arrives. If either half stops being
+     true the early game is broken. */
+  let sakhile = startRun(4242);
+  let low = Infinity;
+  let fundedOnTurn = null;
+  for (let i = 0; i < 14 && sakhile.status === 'playing'; i++) {
+    sakhile = settle(sakhile);
+    for (const id of [...sakhile.missions.offered]) {
+      sakhile = reduce(sakhile, { type: 'ACCEPT_MISSION', missionId: id });
+    }
+    const study = STUDIES
+      .filter((st) => st.waterDelta === 0 && !sakhile.flags[st.setsFlag]
+        && !sakhile.timers.some((t) => t.refId === st.id))
+      .sort((a, b) => a.cost - b.cost)[0];
+    if (study && sakhile.meters.cash > study.cost + 8) {
+      sakhile = reduce(sakhile, { type: 'COMMISSION_STUDY', studyId: study.id, parcelId: 'site1' });
+    }
+    if (sakhile.meters.cash > 8) {
+      sakhile = reduce(sakhile, {
+        type: 'ENGAGE',
+        stakeholder: sakhile.relationships.dfi < 50 ? 'dfi' : 'inkosi',
+        intensity: 1,
+      });
+    }
+    const prev = sakhile.meters.cash;
+    sakhile = reduce(sakhile, { type: 'END_TURN' });
+    low = Math.min(low, prev);
+    if (fundedOnTurn === null && sakhile.meters.cash > prev + 10) fundedOnTurn = sakhile.turn;
+  }
+  check('a competent opening survives the paper years',
+    sakhile.status === 'playing',
+    `${sakhile.status}/${sakhile.endingKind} on turn ${sakhile.turn}`);
+  check('...and is squeezed genuinely hard on the way',
+    low < BALANCE.start.cash / 3, `low water mark R${low.toFixed(1)}m`);
+  check('...and the funding arrives before he runs out',
+    fundedOnTurn !== null, fundedOnTurn ? `turn ${fundedOnTurn}` : 'never');
+  check('...off the back of work he actually did for someone',
+    sakhile.missions.completed.length > 0,
+    `${sakhile.missions.completed.length} completed: ${sakhile.missions.completed.join(', ')}`);
+
+  /* And the flip side, which SPEC §10 names: doing the paperwork and never
+     building anything IS the `sunk` ending. It should be reachable, not
+     engineered away. */
+  let idle = startRun(4242);
+  for (let i = 0; i < 40 && idle.status === 'playing'; i++) {
+    idle = reduce(settle(idle), { type: 'END_TURN' });
+  }
+  check('a run that never builds anything eventually sinks',
+    idle.status === 'lost', `${idle.status}/${idle.endingKind} on turn ${idle.turn}`);
 }
 
 /* --------------------------------------------------------- content integrity */

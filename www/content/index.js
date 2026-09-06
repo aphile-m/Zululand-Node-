@@ -15,6 +15,8 @@ import buildingsJson from './buildings.json' with { type: 'json' };
 import studiesJson from './studies.json' with { type: 'json' };
 import cardsJson from './cards.json' with { type: 'json' };
 import stakeholdersJson from './stakeholders.json' with { type: 'json' };
+import missionsJson from './missions.json' with { type: 'json' };
+import playerJson from './player.json' with { type: 'json' };
 import balanceJson from './balance.json' with { type: 'json' };
 
 /** @type {import('../js/engine/types.js').ActDef[]} */
@@ -35,6 +37,12 @@ export const CARDS = /** @type {any} */ (cardsJson);
 /** @type {import('../js/engine/types.js').StakeholderDef[]} */
 export const STAKEHOLDERS = /** @type {any} */ (stakeholdersJson);
 
+/** @type {import('../js/engine/types.js').MissionDef[]} */
+export const MISSIONS = /** @type {any} */ (missionsJson);
+
+/** @type {import('../js/engine/types.js').PlayerDef} */
+export const PLAYER = /** @type {any} */ (playerJson);
+
 export const BALANCE = /** @type {any} */ (balanceJson);
 
 /** @param {string} id */
@@ -45,3 +53,7 @@ export const buildingDef = (id) => BUILDINGS.find((b) => b.id === id) ?? null;
 export const studyDef = (id) => STUDIES.find((s) => s.id === id) ?? null;
 /** @param {string} id */
 export const cardDef = (id) => CARDS.find((c) => c.id === id) ?? null;
+/** @param {string} id */
+export const missionDef = (id) => MISSIONS.find((m) => m.id === id) ?? null;
+/** @param {string} id */
+export const stakeholderDef = (id) => STAKEHOLDERS.find((s) => s.id === id) ?? null;

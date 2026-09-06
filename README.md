@@ -20,7 +20,7 @@ deliberately **no UI yet**.
 
 | Phase | | |
 |---|---|---|
-| 1 | Engine — types, RNG, reducer, gates, content, tests | **done** |
+| 1 | Engine — types, RNG, reducer, gates, missions, content, tests | **done** |
 | 2 | Ugly playable — buttons and numbers, no art, no map | next |
 | 3 | Balance — hand back to a human; expect `content/` to be rewritten | |
 | 4 | UI — SVG map, card presentation, end card | |
@@ -48,6 +48,7 @@ www/
     gates.js      recursive act-gate predicate evaluator
     selectors.js  pure derived reads, incl. the one sanctioned read of hidden water
     events.js     deck shuffle, draw, resolution
+    missions.js   jobs the five characters give Sakhile
   js/ui/          phase 2
   js/sync/        phase 5
   content/        balance data as versioned JSON (SPEC §2.4)
@@ -69,6 +70,31 @@ npm run serve     # http://localhost:8124 (nothing to see until phase 2)
 
 The engine is pure and has no dependencies, so the test suite needs neither a browser nor
 a running server — unlike the Trainer App's Playwright scripts.
+
+## Who you are
+
+**Sakhile.** Local, young, in a hurry. He ran a spaza, then bakkie hire, then a small
+logistics outfit that does well enough that people have started asking him for things.
+
+Being local is mechanical, not decorative — it sets his opening relationships (high with
+the people who knew his grandfather, low with the institutions that lend money), it sets
+his low opening cash, and it is why both the sports field and the extraction ending cut
+deeper for him than they would for an outside developer. He is the only person in this
+story who will still be living here in eighteen years.
+
+## Who you are dealing with
+
+| | |
+|---|---|
+| **Inkosi Mthiyane** | Traditional council, holds the trust land. Knew Sakhile's grandfather, which opens the door and raises the standard. |
+| **Thandeka Nxumalo** | Acting municipal manager — four years acting. The only reason anything gets signed. |
+| **Bra Sipho Zulu** | Chairs the community forum. Former shop steward. Speaks for people who disagree with each other, and says so. |
+| **Renier van Zyl** | Fuel wholesaler. The easiest money in the game, and the most expensive. |
+| **Dr Amara Okonkwo** | DFI investment officer. Cheapest capital available, and the slowest. |
+
+Each of them gives Sakhile work. A mission is a predicate that offers it, a predicate that
+completes it, a deadline and a payout — so the act-gate evaluator does the evaluating.
+Accepting and declining are free; the work is what costs.
 
 ## The two mechanics worth knowing about
 

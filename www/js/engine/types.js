@@ -79,6 +79,23 @@
  */
 
 /**
+ * A mission accepted and running. `acceptedOnTurn` is what the deadline is
+ * measured from.
+ * @typedef {object} AcceptedMission
+ * @property {string} id
+ * @property {number} acceptedOnTurn
+ */
+
+/**
+ * DECISIONS D13. Four disjoint buckets — a mission id appears in exactly one.
+ * @typedef {object} MissionState
+ * @property {string[]} offered              on the table, awaiting ACCEPT/DECLINE
+ * @property {AcceptedMission[]} accepted    running
+ * @property {string[]} completed
+ * @property {string[]} failed               expired or declined
+ */
+
+/**
  * @typedef {object} Score
  * @property {number} householdsWithTitle
  * @property {number} jobsInCatchment
@@ -106,6 +123,7 @@
  * @property {Record<string, number>} counters      D5 — e.g. cashPositiveStreak
  * @property {StakeholderId[]} engagedThisTurn      D5 — suppresses §6.5 drift
  * @property {number} lastProgressTurn              D5 — gates §6.4 trust decay
+ * @property {MissionState} missions                D13 — jobs from the five characters
  * @property {string[]} hand                  retained, always [] in v1 (D9)
  * @property {string[]} deck
  * @property {string[]} discard
@@ -118,8 +136,8 @@
  */
 
 /**
- * SPEC §5. Unchanged — no action was added or removed. D7's water-raising route
- * deliberately reuses COMMISSION_STUDY rather than widening this union.
+ * SPEC §5, plus the two mission actions from DECISIONS D13. D7's water-raising
+ * route deliberately reuses COMMISSION_STUDY rather than widening this further.
  *
  * @typedef {{ type:'START_RUN', seed:number }} StartRunAction
  * @typedef {{ type:'ENGAGE', stakeholder:StakeholderId, intensity:1|2|3 }} EngageAction
@@ -130,9 +148,12 @@
  * @typedef {{ type:'RESOLVE_EVENT', choiceId:string }} ResolveEventAction
  * @typedef {{ type:'ADVANCE_ACT' }} AdvanceActAction
  * @typedef {{ type:'END_TURN' }} EndTurnAction
+ * @typedef {{ type:'ACCEPT_MISSION', missionId:string }} AcceptMissionAction
+ * @typedef {{ type:'DECLINE_MISSION', missionId:string }} DeclineMissionAction
  *
  * @typedef {StartRunAction|EngageAction|CommissionStudyAction|AcquireRightsAction
- *   |BuildAction|MitigateAction|ResolveEventAction|AdvanceActAction|EndTurnAction} Action
+ *   |BuildAction|MitigateAction|ResolveEventAction|AdvanceActAction|EndTurnAction
+ *   |AcceptMissionAction|DeclineMissionAction} Action
  */
 
 /* ---------- content types (www/content/*.json, SPEC §2.4) ---------- */
@@ -212,10 +233,46 @@
  */
 
 /**
+ * A named person, not an institution (DECISIONS D12). `role` is the institution
+ * they speak for; `name` is who Sakhile is actually talking to.
  * @typedef {object} StakeholderDef
  * @property {StakeholderId} id
  * @property {string} name
+ * @property {string} role
  * @property {string} note
+ * @property {string} portrait    sprite key; '' falls back to the drawn avatar
+ */
+
+/**
+ * @typedef {object} MissionReward
+ * @property {Partial<Meters>} [meters]
+ * @property {Partial<Relationships>} [relationships]
+ * @property {Record<string, boolean>} [flags]
+ */
+
+/**
+ * DECISIONS D13. A mission is a predicate to offer it, a predicate to complete
+ * it, a deadline and a payout — so gates.js does all the evaluation work.
+ *
+ * @typedef {object} MissionDef
+ * @property {string} id
+ * @property {StakeholderId} giver
+ * @property {string} title
+ * @property {string} brief         what the giver says. Never states the reward.
+ * @property {Predicate} offeredWhen
+ * @property {Predicate} completeWhen
+ * @property {number} expiresAfter  turns from acceptance; 0 means never
+ * @property {MissionReward} reward
+ * @property {MissionReward} failure
+ * @property {MissionReward} [declineCost]
+ */
+
+/**
+ * @typedef {object} PlayerDef
+ * @property {string} name
+ * @property {string} tagline
+ * @property {string} bio
+ * @property {string} portrait
  */
 
 export {};

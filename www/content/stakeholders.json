@@ -1,27 +1,37 @@
 [
   {
     "id": "inkosi",
-    "name": "The Inkosi and the traditional council",
-    "note": "Holds the trust land. Cannot be bought, and notices when you only visit before you need something."
+    "name": "Inkosi Mthiyane",
+    "role": "Traditional council — holds the trust land",
+    "note": "Has watched developers arrive and leave since 1998. Unhurried in a way that reads as obstruction only to people in a hurry. Knew Sakhile's grandfather, which opens the door and raises the standard.",
+    "portrait": "mthiyane"
   },
   {
     "id": "municipality",
-    "name": "District municipality",
-    "note": "Signs the permissions. Slow, and slower when the ward committee is unhappy."
+    "name": "Thandeka Nxumalo",
+    "role": "Acting municipal manager — signs the permissions",
+    "note": "Four years acting. Competent, overloaded, and the only reason anything is signed at all. Disappears entirely when the council is placed under administration.",
+    "portrait": "thandeka"
   },
   {
     "id": "community",
-    "name": "Community forum",
-    "note": "Not a monolith. Moderates the rate at which trust decays."
+    "name": "Bra Sipho Zulu",
+    "role": "Chairs the community forum",
+    "note": "Former shop steward, and it shows. Speaks for people who disagree with each other and will tell you so rather than pretend consensus. Went to school with Sakhile's older brother.",
+    "portrait": "sipho"
   },
   {
     "id": "oilCo",
-    "name": "Fuel wholesaler",
-    "note": "Will fund the forecourt on terms that are good for the forecourt."
+    "name": "Renier van Zyl",
+    "role": "Regional manager, fuel wholesaler",
+    "note": "Bakkie, golf shirt, genuinely good company. Will fund the forecourt tomorrow on terms that are excellent for the forecourt. The easiest money in the game, and the most expensive.",
+    "portrait": "renier"
   },
   {
     "id": "dfi",
-    "name": "Development finance institution",
-    "note": "Cheap money, long conditions precedent, and a reporting burden."
+    "name": "Dr Amara Okonkwo",
+    "role": "Investment officer, development finance institution",
+    "note": "The cheapest capital available and the slowest. Eighteen conditions precedent, a social and labour plan, and quarterly reporting until the loan is repaid. Takes Sakhile seriously earlier than the commercial banks do.",
+    "portrait": "amara"
   }
 ]

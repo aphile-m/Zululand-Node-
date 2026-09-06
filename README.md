@@ -53,7 +53,10 @@ www/
   js/sync/        phase 5
   content/        balance data as versioned JSON (SPEC §2.4)
 scripts/
-  test-engine.js  the mandatory reducer suite
+  test-engine.js        the mandatory reducer suite
+  character-prompts.md  the six Higgsfield character-sheet prompts
+  make_sprites.py       sheet -> 8-frame WebP strip (ported from the Trainer App)
+  sprite-urls.txt       generated sheet URLs, consumed by the sprites workflow
 ```
 
 `www/js/engine/` must not import from `ui/` or `sync/`. SPEC §4 asks for an ESLint rule;
@@ -95,6 +98,11 @@ story who will still be living here in eighteen years.
 Each of them gives Sakhile work. A mission is a predicate that offers it, a predicate that
 completes it, a deadline and a payout — so the act-gate evaluator does the evaluating.
 Accepting and declining are free; the work is what costs.
+
+Art for all six is generated from the prompts in `scripts/character-prompts.md` as 8-frame
+idle-loop sheets, processed by `make_sprites.py` into WebP strips and animated in CSS —
+the same pipeline the Trainer App uses for Vic. Until the sheets exist the UI falls back to
+code-drawn SVG portraits, so nothing is blocked on art.
 
 ## The two mechanics worth knowing about
 

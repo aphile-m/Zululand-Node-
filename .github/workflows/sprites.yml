@@ -1,0 +1,40 @@
+name: Build character sprites
+
+# Downloads the Higgsfield-generated character sheets listed in
+# scripts/sprite-urls.txt, processes them into app-ready animation strips, and
+# commits the results. Trigger manually after generating or regenerating sheets.
+#
+# Prompts live in scripts/character-prompts.md and are kept in the repo so a
+# regeneration is reproducible — SPEC §14 wants art produced separately and
+# committed, not conjured at runtime.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sprites
+  cancel-in-progress: true
+
+jobs:
+  sprites:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build strips
+        run: |
+          pip install --quiet pillow numpy
+          python scripts/make_sprites.py
+      - name: Commit results
+        run: |
+          git config user.name "sprite-bot"
+          git config user.email "actions@github.com"
+          git add www/img/ch-*.webp www/img/ch-meta.json
+          git diff --cached --quiet && echo "no changes" && exit 0
+          git commit -m "Character sprite strips (generated from Higgsfield sheets)"
+          git push

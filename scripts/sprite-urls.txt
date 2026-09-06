@@ -1,0 +1,22 @@
+# Character sheet URLs, consumed by make_sprites.py via the "Build character
+# sprites" workflow. One line per character:
+#
+#     <key> <url> [colsxrows] [center]
+#
+# colsxrows defaults to 4x2, which is what scripts/character-prompts.md asks
+# for, so it only needs stating if you generated a different grid.
+#
+# `center` switches from union-bbox cropping to per-frame bottom-centre
+# alignment. Add it ONLY if the model drew the figure at different spots
+# between cells — union bbox preserves inter-frame registration and gives a
+# steadier idle loop, so it is the better default when the sheet is clean.
+#
+# Prompts: scripts/character-prompts.md
+# Output:  www/img/ch-<key>.webp + www/img/ch-meta.json
+#
+# sakhile   <url>
+# mthiyane  <url>
+# thandeka  <url>
+# sipho     <url>
+# renier    <url>
+# amara     <url>

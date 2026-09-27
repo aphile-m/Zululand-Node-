@@ -99,7 +99,9 @@ function panels() {
       title: 'Five people',
       body: () => p(
         el('div', { class: 'castrow' }, STAKEHOLDERS.map((s) =>
-          el('div', { class: 'castcell' }, [portrait(s.portrait || s.id, 52), el('span', { text: s.name.split(' ').slice(-1)[0] })]))),
+          /* Last-word-of-name gave "Zyl" for Renier van Zyl, so the short form is
+             content rather than string surgery. */
+          el('div', { class: 'castcell' }, [portrait(s.portrait || s.id, 52), el('span', { text: s.short })]))),
         el('p', { text: 'Every one of them can help you and every one of them can stop you. They give you work — and doing their work is how a young man with no balance sheet gets funded.' }),
         el('p', { class: 'muted', text: 'Taking a job costs nothing. Doing it is what costs.' }),
       ),

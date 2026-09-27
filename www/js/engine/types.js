@@ -238,6 +238,7 @@
  * @typedef {object} StakeholderDef
  * @property {StakeholderId} id
  * @property {string} name
+ * @property {string} short       what people actually call them, for tight labels
  * @property {string} role
  * @property {string} note
  * @property {string} portrait    sprite key; '' falls back to the drawn avatar

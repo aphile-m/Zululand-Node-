@@ -11,12 +11,13 @@
    included too, but the UI falls back to drawn portraits without them, so a
    miss there costs nothing. */
 
-const CACHE = 'node-v1';
+const CACHE = 'node-v2';
 
 const SHELL = [
   '.', 'index.html', 'manifest.webmanifest', 'css/app.css',
   'js/app.js',
   'js/ui/store.js', 'js/ui/render.js', 'js/ui/portrait.js',
+  'js/ui/title.js', 'js/ui/audio.js',
   'js/engine/types.js', 'js/engine/rng.js', 'js/engine/reduce.js',
   'js/engine/gates.js', 'js/engine/selectors.js', 'js/engine/events.js',
   'js/engine/missions.js',

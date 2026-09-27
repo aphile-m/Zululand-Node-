@@ -227,3 +227,104 @@ details.parcel > summary::before {
 }
 details.parcel[open] > summary::before { content: '▾'; }
 details.parcel[open] > summary { margin-bottom: 6px; }
+
+/* ============================================================
+   Title, explainer, sprite animation
+   ============================================================ */
+
+/* One row of frames stepped across; the travel distance differs per character
+   because each sheet was cropped to its own figure, so it rides in a custom
+   property set inline. */
+@keyframes spritewalk { to { background-position-x: var(--travel); } }
+
+.screen.full {
+  min-height: calc(100vh - var(--safe-t) - var(--safe-b));
+  align-content: center;
+  padding: 20px 16px calc(28px + var(--safe-b));
+  gap: 0;
+}
+
+/* ---------- title ---------- */
+
+.title { display: grid; justify-items: center; gap: 14px; text-align: center; }
+
+.title .mark { width: 76px; height: 76px; }
+.title .mark circle { animation: pulse 3.2s ease-in-out infinite; transform-origin: center; }
+.title .mark circle:nth-of-type(2) { animation-delay: .5s; }
+.title .mark circle:nth-of-type(3) { animation-delay: 1s; }
+@keyframes pulse { 0%, 100% { opacity: .7; } 50% { opacity: 1; } }
+
+.wordmark {
+  margin: 0;
+  font-size: clamp(44px, 16vw, 68px);
+  font-weight: 800;
+  letter-spacing: .22em;
+  text-indent: .22em;          /* letter-spacing pads the right; re-centre */
+  color: var(--accent);
+  line-height: 1;
+}
+
+.tagline { margin: 0; color: var(--dim); font-size: 14px; max-width: 30ch; }
+
+.titlebtns { display: grid; gap: 8px; width: 100%; max-width: 300px; margin-top: 4px; }
+
+.linkish {
+  background: none; border: 0; color: var(--dim);
+  font: inherit; font-size: 13px; cursor: pointer; padding: 6px;
+  text-decoration: underline; text-underline-offset: 3px;
+}
+.linkish:hover { color: var(--text); }
+.title .sound { text-decoration: none; letter-spacing: .04em; }
+
+.credit { margin: 0; color: var(--dim); font-size: 12px; opacity: .75; }
+
+/* ---------- explainer ---------- */
+
+.explainer { display: grid; gap: 14px; justify-items: center; text-align: center; max-width: 460px; margin-inline: auto; }
+.explainer h2 { margin: 0; font-size: 22px; color: var(--accent); }
+.explainer p { margin: 0; max-width: 42ch; }
+.explainer .lede { font-size: 16px; }
+.explainer .panelbody { display: grid; gap: 12px; justify-items: center; }
+
+.dots { display: flex; gap: 6px; }
+.dots span { width: 7px; height: 7px; border-radius: 50%; background: var(--line); }
+.dots span.on { background: var(--accent); }
+
+.navrow { display: flex; gap: 8px; width: 100%; max-width: 320px; }
+.navrow .btn { flex: 1; }
+.grow-btn { flex: 2 !important; }
+
+.hero { min-height: 200px; display: grid; place-items: end center; }
+
+.keyrow { display: grid; gap: 8px; width: 100%; text-align: left; }
+.keycell {
+  display: grid; gap: 2px;
+  border-left: 3px solid var(--accent);
+  background: var(--panel);
+  padding: 8px 10px; border-radius: 0 6px 6px 0;
+}
+.keycell b { color: var(--text); }
+.keycell span { color: var(--dim); font-size: 13px; }
+
+.castrow { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.castcell { display: grid; gap: 4px; justify-items: center; }
+.castcell span { font-size: 11px; color: var(--dim); }
+.castcell .portrait { border-radius: 6px; overflow: hidden; background: var(--panel-2); }
+
+.acts { text-align: left; margin: 0; padding-left: 1.4em; color: var(--dim); display: grid; gap: 2px; }
+.acts li { font-size: 14px; }
+
+.scorekey { display: grid; gap: 6px; width: 100%; max-width: 320px; }
+.scorekey > div {
+  display: flex; justify-content: space-between; align-items: baseline;
+  background: var(--panel); border: 1px solid var(--line);
+  border-radius: 6px; padding: 7px 10px;
+}
+.scorekey span { color: var(--accent); font-variant-numeric: tabular-nums; }
+.scorekey .zero { border-style: dashed; }
+.scorekey .zero b, .scorekey .zero span { color: var(--dim); }
+
+/* Respect a reduced-motion preference: the idle loops are decoration. */
+@media (prefers-reduced-motion: reduce) {
+  .sprite-figure, .title .mark circle { animation: none !important; }
+}

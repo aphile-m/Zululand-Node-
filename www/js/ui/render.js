@@ -17,8 +17,10 @@ import {
   householdsWithTitle, jobsInCatchment, netOperatingIncome, quarterlyBurn,
 } from '../engine/selectors.js';
 import { turnsLeft } from '../engine/missions.js';
-import { getState, dispatch, restart } from './store.js';
+import { getState, dispatch, restart, hasSavedRun } from './store.js';
 import { portrait } from './portrait.js';
+import { renderTitle, renderExplainer, hasSeenExplainer } from './title.js';
+import { sfx, duck, unlock, startMusic } from './audio.js';
 
 /** @typedef {import('../engine/types.js').GameState} GameState */
 
@@ -30,6 +32,21 @@ const TABS = /** @type {const} */ ([
 ]);
 
 let tab = /** @type {string} */ ('node');
+
+/* Which screen we are on. This is UI state, not game state — it has no place in
+   GameState and is deliberately not persisted beyond the "seen the explainer"
+   flag, so a reload of a run in progress goes straight back to the run. */
+let view = /** @type {'title'|'explainer'|'run'} */ ('title');
+
+/** @param {'title'|'explainer'|'run'} v */
+export function setView(v) { view = v; render(); }
+
+/** Skip the title — used by `?seed=`, which means "play this run now". */
+export function startAtRun() { view = 'run'; }
+
+/* The event card and the end card are moments; the music should get out of
+   their way. Tracked so the duck only fires on the transition. */
+let ducked = false;
 
 /* ---------- tiny DOM helpers ---------- */
 
@@ -69,7 +86,15 @@ const button = (label, onClick, o = {}) =>
     class: `btn${o.primary ? ' primary' : ''}${o.danger ? ' danger' : ''}${o.wide ? ' wide' : ''}`,
     disabled: o.disabled ? true : null,
     title: o.title ?? null,
-    onclick: onClick,
+    onclick: () => {
+      /* Every click is also a user gesture, which is the only thing a browser
+         will start audio from — so a player who reloaded straight into a run
+         still gets sound on their first action (SPEC §12). */
+      unlock();
+      startMusic();
+      sfx(o.danger ? 'deny' : o.primary ? 'confirm' : 'tap');
+      onClick();
+    },
   }, [label]);
 
 /* ---------- top bar ---------- */
@@ -375,6 +400,9 @@ function renderOverlay(s) {
   if (!root) return;
   root.innerHTML = '';
 
+  const wantDuck = s.pendingEvent !== null || s.status !== 'playing';
+  if (wantDuck !== ducked) { duck(wantDuck); ducked = wantDuck; }
+
   if (s.status !== 'playing') {
     const won = s.status === 'won';
     const kind = s.endingKind ?? 'handover';
@@ -413,6 +441,7 @@ function renderOverlay(s) {
     ]));
     root.appendChild(el('div', { class: 'sheet' }, kids));
     root.hidden = false;
+    if (!endToneDone) { endToneDone = true; sfx(won && kind !== 'extraction' ? 'good' : 'bad'); }
     return;
   }
 
@@ -432,10 +461,44 @@ function renderOverlay(s) {
   root.hidden = true;
 }
 
+/* One-shot so the ending stinger does not retrigger on every redraw. */
+let endToneDone = false;
+
 /* ---------- the whole screen ---------- */
 
 export function render() {
   const s = getState();
+
+  const topEl = document.getElementById('topbar');
+  const screenEl = document.getElementById('screen');
+  const barEl = document.getElementById('tabbar');
+  const overlayEl = document.getElementById('overlay');
+
+  /* Title and explainer own the whole viewport: no meters, no tabs, no card. */
+  if (view !== 'run') {
+    if (topEl) topEl.innerHTML = '';
+    if (barEl) barEl.innerHTML = '';
+    if (overlayEl) overlayEl.hidden = true;
+    if (!screenEl) return;
+    screenEl.className = 'screen full';
+    if (view === 'explainer') {
+      renderExplainer(screenEl, () => { view = 'run'; render(); });
+    } else {
+      renderTitle(screenEl, {
+        hasSave: hasSavedRun(),
+        onContinue: () => { view = 'run'; render(); },
+        onNew: () => {
+          restart();
+          endToneDone = false;
+          view = hasSeenExplainer() ? 'run' : 'explainer';
+          render();
+        },
+        onExplain: () => { view = 'explainer'; render(); },
+      });
+    }
+    return;
+  }
+  if (screenEl) screenEl.className = 'screen';
 
   const top = document.getElementById('topbar');
   if (top) { top.innerHTML = ''; top.appendChild(renderTop(s)); }

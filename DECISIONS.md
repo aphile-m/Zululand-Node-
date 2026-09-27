@@ -388,6 +388,50 @@ Two bugs the browser test caught that no reducer test could:
 
 ---
 
+## D21 — A title screen and an explainer are not a tutorial system
+
+SPEC §14 rules out "a tutorial system". This adds a title screen and a six-panel
+explainer anyway, on the reading that §14 bans *contextual handholding* — a scripted
+first turn, prompts that watch what you do, a hand pointing at the next button — not
+a page that says what the game is.
+
+The distinction is load-bearing in the other direction too: a game that opens on
+twelve collapsed parcels and four unexplained meters is not respecting the player's
+time. The explainer is skippable, shown once, and reachable from the title afterwards.
+
+**What it must never do** is defuse the two mechanics the spec builds its lesson on:
+
+- **§8, the sports field.** Not mentioned at all. §8 requires the first time to be
+  unwarned, and a line about displacement here would destroy the teaching moment
+  the whole game is built around.
+- **§9, hidden water.** Panel 2 says the number is unknown because nobody has looked.
+  That is true, and it is the hook. It never says what happens if you never look.
+
+Both are asserted by `scripts/test-ui.js`, which greps the assembled panel text — the
+explainer is prose, and prose drifts.
+
+---
+
+## D22 — The soundtrack is synthesised, not shipped
+
+SPEC §3 forbids new dependencies and D1 forbids a build step; a music file would also
+be the largest asset in the repo by an order of magnitude. So `js/ui/audio.js` is a
+small Web Audio chiptune engine: square-wave melody, triangle bass, filtered-noise hat,
+scheduled with a 120ms lookahead because driving oscillators straight off `setInterval`
+jitters audibly. About 4KB of source, and offline by construction.
+
+The tune is four bars in D minor (i–VI–III–VII) at 92bpm, and it rests more than it
+plays. §1 asks for "dry, respectful, specific"; a jaunty arcade loop over a game about
+eighteen years of waiting for permissions would be the wrong joke.
+
+The AudioContext is created on the first click and never before, which is what SPEC §12
+anticipates: *"Audio requires a user gesture; the title screen provides it."* Every
+button in the game also calls `unlock()`, so a player who reloaded straight into a run
+still gets sound on their first action. Mute persists in localStorage, and the music
+ducks while an event card or the end card is up.
+
+---
+
 ## D15 — Answers to SPEC.md §15 (open decisions)
 
 1. **Action points per turn — 3.** Kept as the spec's placeholder, but read from

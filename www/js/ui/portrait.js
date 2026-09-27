@@ -128,8 +128,17 @@ export function portrait(key, size = 56) {
 }
 
 /**
- * The full standing figure, for the title screen. Falls back to nothing rather
- * than to a giant bust — the drawn portrait is a 56px device.
+ * The full standing figure, animated, for the title and the explainer. Falls
+ * back to nothing rather than to a giant bust — the drawn portrait is a 56px
+ * device and does not survive being blown up.
+ *
+ * The strip is one row of frames, so the idle loop is `background-position-x`
+ * stepped across it. `steps(n)` is what makes it read as sprite animation
+ * rather than as a slide: without it the browser tweens between frames and the
+ * figure smears. The travel distance differs per character (each sheet was
+ * cropped to its own figure), so it rides in a custom property that the shared
+ * keyframe reads.
+ *
  * @param {string} key
  * @param {number} height
  * @returns {HTMLElement|null}
@@ -138,12 +147,18 @@ export function figure(key, height = 180) {
   const m = meta[key];
   if (!m || !m.fw) return null;
   const scale = height / m.fh;
+  const frameW = m.fw * scale;
   const d = document.createElement('div');
   d.className = 'sprite-figure';
-  d.style.width = `${m.fw * scale}px`;
+  d.style.width = `${frameW}px`;
   d.style.height = `${height}px`;
   d.style.backgroundImage = `url(img/ch-${key}.webp)`;
-  d.style.backgroundSize = `${m.fw * m.frames * scale}px ${height}px`;
+  d.style.backgroundSize = `${frameW * m.frames}px ${height}px`;
+  if (m.frames > 1) {
+    d.style.setProperty('--travel', `-${frameW * m.frames}px`);
+    // ~7fps, the rate the Trainer App settled on for Vic's idle
+    d.style.animation = `spritewalk ${(m.frames / 7).toFixed(2)}s steps(${m.frames}) infinite`;
+  }
   d.setAttribute('role', 'img');
   d.setAttribute('aria-label', key);
   return d;

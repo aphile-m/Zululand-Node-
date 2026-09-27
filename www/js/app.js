@@ -7,7 +7,7 @@
    same seed. */
 
 import { init, subscribe } from './ui/store.js';
-import { render } from './ui/render.js';
+import { render, startAtRun } from './ui/render.js';
 import { loadPortraits } from './ui/portrait.js';
 
 const url = new URL(location.href);
@@ -16,6 +16,11 @@ const seed = raw !== null && raw !== '' && Number.isFinite(Number(raw)) ? Number
 
 init(seed);
 subscribe(render);
+
+/* A seed in the URL means "play THIS run", so it skips the title: it is how the
+   end card offers a rerun on the same seed (SPEC §9) and how the UI test gets
+   to a known state. Without one, the game opens on the title. */
+if (seed !== undefined) startAtRun();
 
 /* Resolve the sprite metadata before the first paint so portraits do not
    flicker from drawn bust to sprite. It cannot fail the boot: if the art has

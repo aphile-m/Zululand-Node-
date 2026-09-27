@@ -76,6 +76,16 @@ export function init(seed) {
   return state;
 }
 
+/* Whether a run was already on this device. Captured at module load, before
+   init() writes anything, because the title screen needs to know whether to
+   offer Continue — and by the time it renders, init() has always saved. */
+const hadSaveAtBoot = loadSaved() !== null;
+
+/** @returns {boolean} */
+export const hasSavedRun = () => hadSaveAtBoot && !wiped;
+
+let wiped = false;
+
 export const getState = () => state;
 export const getLog = () => actionLog;
 
@@ -99,6 +109,7 @@ export function subscribe(fn) {
     exactly — which is what SPEC §9's end card offers after a dry ending. */
 /** @param {number} [seed] */
 export function restart(seed) {
+  wiped = true;
   try {
     localStorage.removeItem(KEY);
   } catch { /* nothing to clean up */ }

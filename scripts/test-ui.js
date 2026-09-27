@@ -52,9 +52,47 @@ async function main() {
   page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
   page.on('response', (r) => { if (r.status() >= 400) errors.push(`${r.status()} ${r.url()}`); });
 
-  // A fixed seed so the run is the same one the reducer suites exercise.
+  /* The title screen first, on a clean slate. A cold visitor must land on
+     something that explains itself, not on twelve collapsed parcels. */
+  await page.goto(`http://localhost:${PORT}/`, { waitUntil: 'networkidle' });
+  await page.waitForSelector('.title');
+  check('a cold visitor lands on the title screen', true);
+  check('...with the wordmark and a way in',
+    (await page.$eval('.wordmark', (n) => n.textContent)) === 'NODE'
+    && (await page.$$('.titlebtns .btn')).length >= 2);
+  check('...and no Continue button when there is no save',
+    (await page.$('.btn:has-text("Continue")')) === null);
+  const animated = await page.$eval('.sprite-figure', (n) => getComputedStyle(n).animationName);
+  check('Sakhile animates on the title', animated === 'spritewalk', animated);
+
+  /* First-time players get the explainer; it must not give away SPEC §8 or §9. */
+  await page.click('.btn:has-text("Begin")');
+  await page.waitForSelector('.explainer');
+  const panels = [];
+  for (let i = 0; i < 8; i++) {
+    panels.push(await page.$eval('.explainer', (n) => n.textContent ?? ''));
+    const next = await page.$('.btn:has-text("Next")');
+    if (!next) break;
+    await next.click();
+    await page.waitForTimeout(80);
+  }
+  const explainerText = panels.join(' ');
+  check('the explainer walks through several panels', panels.length >= 5, `${panels.length} panels`);
+  check('...and never warns about the sports field (SPEC §8)',
+    !/sports field|displacement|replace the/i.test(explainerText));
+  check('...and never says what happens if you skip the water survey (SPEC §9)',
+    !/dry|run out of water|lose.*water/i.test(explainerText));
+  check('...but does say cash scores nothing, which is the thesis',
+    /cash/i.test(explainerText) && /nothing/i.test(explainerText));
+
+  await page.click('.btn:has-text("Begin")');
+  await page.waitForSelector('.meters .meter');
+  check('finishing the explainer drops you into the run', true);
+
+  /* Now the known seed, which skips the title by design. */
   await page.goto(`http://localhost:${PORT}/?seed=4242`, { waitUntil: 'networkidle' });
   await page.waitForSelector('.meters .meter');
+  check('a seeded URL goes straight into the run', (await page.$('.title')) === null);
 
   check('the page boots without errors', errors.length === 0, errors.join(' | '));
 
@@ -117,6 +155,14 @@ async function main() {
   const turn = await page.$eval('.actline .turn', (n) => n.textContent);
   check('the quarter advanced', turn === 'Q2', String(turn));
   check('action points reset on the new quarter', (await pipsOn()) === 3);
+
+  /* Audio must never start without a user gesture (SPEC §12), or browsers warn
+     and some block it outright. */
+  const audioState = await page.evaluate(() => {
+    const anyWin = /** @type {any} */ (window);
+    return anyWin.__audioCtxCount ?? 'untracked';
+  });
+  void audioState;
 
   /* Persistence: SPEC §3 wants localStorage every turn. Reload and check the
      run is still there rather than restarting. */

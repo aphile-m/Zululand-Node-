@@ -22,6 +22,7 @@ wins in 90 turns with 240 households and a score of 1054.
 |---|---|---|
 | 1 | Engine — types, RNG, reducer, gates, missions, content, tests | **done** |
 | 2 | Ugly playable — buttons and numbers, no map | **done** |
+| 2.5 | Title, explainer, chiptune, animated sprites | **done** |
 | 3 | Balance — hand back to a human; expect `content/` to be rewritten | next |
 | 4 | UI — SVG map, card presentation, end card | |
 | 5 | Backend — sync and resume | |
@@ -56,6 +57,8 @@ www/
     store.js      state + localStorage; the impure side of the line
     render.js     the screen. Reads selectors only, never GameState
     portrait.js   sprite strips, with drawn SVG busts as the fallback
+    title.js      splash screen and the six-panel explainer
+    audio.js      Web Audio chiptune + interface blips; no files, no deps
   js/sync/        phase 5
   img/            ch-*.webp character strips + ch-meta.json
   content/        balance data as versioned JSON (SPEC §2.4)

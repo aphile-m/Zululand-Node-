@@ -8,12 +8,14 @@
     "serve": "node serve.js",
     "test": "node scripts/test-engine.js",
     "typecheck": "tsc --noEmit",
-    "check": "npm run typecheck && npm test && npm run test:fullrun",
+    "check": "npm run typecheck && npm test && npm run test:fullrun && npm run test:ui",
     "sync": "cap sync android",
     "build:apk": "cd android && gradlew assembleDebug",
-    "test:fullrun": "node scripts/test-fullrun.js"
+    "test:fullrun": "node scripts/test-fullrun.js",
+    "test:ui": "node scripts/test-ui.js"
   },
   "devDependencies": {
+    "playwright": "^1.63.0",
     "typescript": "^5.9.2"
   },
   "dependencies": {

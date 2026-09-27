@@ -1,22 +1,19 @@
 # Character sheet URLs, consumed by make_sprites.py via the "Build character
 # sprites" workflow. One line per character:
 #
-#     <key> <url> [colsxrows] [center]
+#     <key> <url> [colsxrows] [center] [auto]
 #
-# colsxrows defaults to 4x2, which is what scripts/character-prompts.md asks
-# for, so it only needs stating if you generated a different grid.
-#
-# `center` switches from union-bbox cropping to per-frame bottom-centre
-# alignment. Add it ONLY if the model drew the figure at different spots
-# between cells — union bbox preserves inter-frame registration and gives a
-# steadier idle loop, so it is the better default when the sheet is clean.
+# `auto` detects the figures instead of assuming a grid, and drops any that run
+# off the canvas. Use it for these sheets: the model did not reliably honour the
+# 4x2 cell boundaries it was asked for, and three of the six had their bottom
+# row cut off, which a grid slice would have packed as four footless frames.
 #
 # Prompts: scripts/character-prompts.md
 # Output:  www/img/ch-<key>.webp + www/img/ch-meta.json
-#
-# sakhile   <url>
-# mthiyane  <url>
-# thandeka  <url>
-# sipho     <url>
-# renier    <url>
-# amara     <url>
+
+sakhile  https://d8j0ntlcm91z4.cloudfront.net/user_3GA62485TYRe1yTnS0xRqwArwkw/hf_20260927_054853_aef754d6-66a1-4634-bf44-051eb8541255.png auto
+mthiyane https://d8j0ntlcm91z4.cloudfront.net/user_3GA62485TYRe1yTnS0xRqwArwkw/hf_20260927_054853_83557e45-6489-4069-b4e7-9fec31ac6e1c.png auto
+thandeka https://d8j0ntlcm91z4.cloudfront.net/user_3GA62485TYRe1yTnS0xRqwArwkw/hf_20260927_054853_26c2d839-05f5-4d74-ac5c-01825785ad63.png auto
+sipho    https://d8j0ntlcm91z4.cloudfront.net/user_3GA62485TYRe1yTnS0xRqwArwkw/hf_20260927_054853_7d94d48f-99f6-4d28-9d59-88eef39dfa97.png auto
+renier   https://d8j0ntlcm91z4.cloudfront.net/user_3GA62485TYRe1yTnS0xRqwArwkw/hf_20260927_054853_fc29f6b6-5fc9-4de4-b2d8-4d1400a9d814.png auto
+amara    https://d8j0ntlcm91z4.cloudfront.net/user_3GA62485TYRe1yTnS0xRqwArwkw/hf_20260927_054853_c7e94dae-7b2b-4ca3-9a68-f126def0e03c.png auto

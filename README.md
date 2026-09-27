@@ -12,20 +12,23 @@ and a failed town, and scores badly for it.
 Full specification: [SPEC.md](SPEC.md). Deviations from it, with reasons:
 [DECISIONS.md](DECISIONS.md).
 
-## Status — phase 1 (engine) complete
+## Status — phase 2 (playable) complete
 
-Per SPEC §13 the phases are strictly ordered, and phase 1 is done when the reducer
-replays deterministically and every ending has a test that fires it. Both hold. There is
-deliberately **no UI yet**.
+Per SPEC §13 the phases are strictly ordered. Phase 2 is done when a full run from act 0
+to handover is completable in one sitting — proved headlessly by `test-fullrun.js`, which
+wins in 90 turns with 240 households and a score of 1054.
 
 | Phase | | |
 |---|---|---|
 | 1 | Engine — types, RNG, reducer, gates, missions, content, tests | **done** |
-| 2 | Ugly playable — buttons and numbers, no art, no map | next |
-| 3 | Balance — hand back to a human; expect `content/` to be rewritten | |
+| 2 | Ugly playable — buttons and numbers, no map | **done** |
+| 3 | Balance — hand back to a human; expect `content/` to be rewritten | next |
 | 4 | UI — SVG map, card presentation, end card | |
 | 5 | Backend — sync and resume | |
 | 6 | Packaging — PWA, then Capacitor | |
+
+The cast art arrived early (it was cheap once the pipeline existed), but phase 4's real
+UI work — the SVG map, meter animation, card presentation — is still ahead.
 
 ## Stack
 
@@ -49,11 +52,17 @@ www/
     selectors.js  pure derived reads, incl. the one sanctioned read of hidden water
     events.js     deck shuffle, draw, resolution
     missions.js   jobs the five characters give Sakhile
-  js/ui/          phase 2
+  js/ui/
+    store.js      state + localStorage; the impure side of the line
+    render.js     the screen. Reads selectors only, never GameState
+    portrait.js   sprite strips, with drawn SVG busts as the fallback
   js/sync/        phase 5
+  img/            ch-*.webp character strips + ch-meta.json
   content/        balance data as versioned JSON (SPEC §2.4)
 scripts/
   test-engine.js        the mandatory reducer suite
+  test-fullrun.js       proves act 0 -> handover is completable
+  test-ui.js            drives the real UI in a real browser
   character-prompts.md  the six Higgsfield character-sheet prompts
   make_sprites.py       sheet -> 8-frame WebP strip (ported from the Trainer App)
   sprite-urls.txt       generated sheet URLs, consumed by the sprites workflow
@@ -66,13 +75,15 @@ scripts/
 
 ```bash
 npm install
-npm run check     # tsc --noEmit, then the reducer suite
-npm test          # the reducer suite alone — no browser, no server needed
-npm run serve     # http://localhost:8124 (nothing to see until phase 2)
+npm run check         # typecheck + all three suites
+npm test              # the reducer suite — no browser, no server needed
+npm run test:fullrun  # act 0 to handover, headless
+npm run test:ui       # the real UI in a real browser (add -- --shot for screenshots)
+npm run serve         # http://localhost:8124   (?seed=4242 to replay a known run)
 ```
 
-The engine is pure and has no dependencies, so the test suite needs neither a browser nor
-a running server — unlike the Trainer App's Playwright scripts.
+The engine is pure and has no dependencies, so the reducer suites need neither a browser
+nor a server. Only the UI test does.
 
 ## Who you are
 

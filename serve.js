@@ -6,6 +6,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+const PORT = Number(process.env.PORT) || 8124;
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), 'www');
 const MIME = {
   '.html': 'text/html; charset=utf-8',
@@ -41,4 +42,4 @@ http
       res.end(d);
     });
   })
-  .listen(8124, () => console.log('NODE dev server on http://localhost:8124'));
+  .listen(PORT, () => console.log(`NODE dev server on http://localhost:${PORT}`));

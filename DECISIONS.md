@@ -337,6 +337,57 @@ completable; three others were tried and reverted once the real cause — a bug 
 
 ---
 
+## D19 — Sprite sheets are figure-detected, not grid-sliced
+
+`make_sprites.py` slices a sheet by an assumed `colsxrows` grid. Of the six
+character sheets generated from `scripts/character-prompts.md`, **three had their
+bottom row running off the canvas** — the model honoured the 4×2 layout loosely.
+A grid slice would have packed four frames with their feet cut off, and the union
+bbox would then have stretched every frame to match.
+
+Added an `auto` mode: threshold against the corner colour, split into column bands,
+split each band into row bands, and drop any figure touching the top or bottom edge
+— which is exactly what "cropped" looks like. Frames come out 4 or 8 per character
+depending on how much each sheet overflowed, which is fine; the count is recorded in
+`ch-meta.json`.
+
+On a flat chroma background this also makes the multi-pass keying unnecessary. That
+machinery exists for messy near-black sheets; a single threshold against `#FF00FF`
+is unambiguous, which is the second dividend of the magenta decision.
+
+Two edge treatments come with it: the mask is eroded by one pixel to drop the
+anti-aliased chroma fringe (these figures carry a heavy black outline, so a pixel
+off the edge is invisible while a pink halo is not), and anything still reading
+magenta is despilled. Residual chroma across all six went from ~0.5% of figure
+pixels to **zero**.
+
+---
+
+## D20 — Phase 2 UI: full redraw, selectors only, drawn-portrait fallback
+
+The UI re-renders everything on every dispatch. At this size diffing would be more
+code and more bugs, and a full redraw means the screen cannot drift out of step with
+the reducer.
+
+It reads through `selectors.js` and never touches `GameState` directly, which is what
+keeps SPEC §9's hidden water honest by construction — `render.js` contains no
+reference to `state.meters.water`, and `scripts/test-ui.js` asserts the seeded value
+appears nowhere in the rendered DOM.
+
+`portrait.js` draws an SVG bust when a sprite is missing, mirroring the Trainer App's
+`vic-avatar.js`. It matters more here: §12 requires the game to launch offline and §13
+puts the UI (phase 2) before the art (phase 4), so the UI can never be blocked on art.
+
+Two bugs the browser test caught that no reducer test could:
+
+- **A seeded URL restarted the run on every reload.** `?seed=N` skipped the save
+  unconditionally, so refreshing threw the game away. A save is now resumed whenever
+  it *is* the requested run.
+- The precache list in `sw.js` is hand-written and exactly the kind of thing that
+  rots when a module is added, so the UI test now fetches every entry.
+
+---
+
 ## D15 — Answers to SPEC.md §15 (open decisions)
 
 1. **Action points per turn — 3.** Kept as the spec's placeholder, but read from

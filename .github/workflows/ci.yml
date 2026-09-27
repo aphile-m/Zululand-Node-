@@ -37,3 +37,7 @@ jobs:
         run: node scripts/test-engine.js
       - name: Full run is completable (SPEC §13 phase 2)
         run: node scripts/test-fullrun.js
+      - name: Install Chromium for the UI test
+        run: npx playwright install --with-deps chromium
+      - name: UI smoke test
+        run: node scripts/test-ui.js

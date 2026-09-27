@@ -71,7 +71,16 @@ scripts/
 `www/js/engine/` must not import from `ui/` or `sync/`. SPEC §4 asks for an ESLint rule;
 `test-engine.js` asserts it directly instead ([D10](DECISIONS.md)).
 
-## Run it
+## Play it
+
+**https://aphile-m.github.io/Zululand-Node-/** — deployed from `main` on every push to
+`www/`. It is a PWA: on a phone, use "Add to Home Screen" and it works offline from then
+on, including on a plane.
+
+Add `?seed=4242` to play the exact run the tests use. Refresh resumes; it does not
+restart. Progress lives in `localStorage` on that device.
+
+## Run it locally
 
 ```bash
 npm install

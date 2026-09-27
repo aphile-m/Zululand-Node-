@@ -1,0 +1,53 @@
+name: Deploy the game (GitHub Pages)
+
+# Publishes www/ as the playable web app at
+# https://aphile-m.github.io/Zululand-Node-/
+#
+# There is no build step (DECISIONS D1), so this uploads the directory as it
+# sits in the repo — what is served is exactly what runs locally under
+# `npm run serve`.
+#
+# Everything in www/ uses relative paths, which is what lets it work from a
+# repository subpath rather than a domain root: the manifest's start_url and
+# scope are ".", the service worker's precache entries are relative to its own
+# location, and the ES modules import each other relatively. An absolute path
+# anywhere in there would 404 under /Zululand-Node-/.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'www/**'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - name: Upload www as the site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: www
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4
+      - name: Say where it landed
+        run: echo "Play it at ${{ steps.deploy.outputs.page_url }}" >> "$GITHUB_STEP_SUMMARY"
